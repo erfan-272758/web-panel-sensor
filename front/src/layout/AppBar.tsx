@@ -12,7 +12,7 @@ const CustomAppBar = () => {
   const translate = useTranslate();
   return (
     <AppBar color="secondary" toolbar={<AppBarToolbar />}>
-      <TitlePortal>{translate("appName")}</TitlePortal>
+      <TitlePortal id="ra-title">{translate("appName")}</TitlePortal>
       {/* {isLargeEnough && <Logo />} */}
       {isLargeEnough && <Box component="span" sx={{ flex: 1 }} />}
     </AppBar>

@@ -54,6 +54,7 @@ const customEnglishMessages: TranslationMessages = {
     },
     users: {
       name: "Users",
+      edit_title: "Edit User",
     },
     customers: {
       name: "Customer |||| Customers",

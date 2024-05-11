@@ -14,6 +14,7 @@ import {
 import { useLocation } from "react-router";
 
 import StarRatingInput from "./StarRatingInput";
+import { PasswordInput } from "react-admin";
 
 const UserCreate = () => {
   const notify = useNotify();
@@ -23,31 +24,21 @@ const UserCreate = () => {
   const onSuccess = (_: any) => {
     const record = getRecordFromLocation(location);
     notify("ra.notification.created");
-    if (record && record.product_id) {
-      redirect(`/products/${record.product_id}/Users`);
-    } else {
-      redirect(`/Users`);
-    }
+    redirect(`/users`);
   };
 
   return (
     <Create mutationOptions={{ onSuccess }}>
       <SimpleForm defaultValues={{ status: "pending" }}>
-        <ReferenceInput source="customer_id" reference="customers">
-          <AutocompleteInput validate={required()} />
-        </ReferenceInput>
-        <ReferenceInput source="product_id" reference="products">
-          <AutocompleteInput optionText="reference" validate={required()} />
-        </ReferenceInput>
-        <DateInput
-          source="date"
-          defaultValue={new Date()}
+        <TextInput source="name" fullWidth resettable validate={required()} />
+        <TextInput
+          source="username"
+          fullWidth
+          resettable
           validate={required()}
         />
-        <StarRatingInput source="rating" defaultValue={2} />
-        <TextInput
-          source="comment"
-          multiline
+        <PasswordInput
+          source="password"
           fullWidth
           resettable
           validate={required()}

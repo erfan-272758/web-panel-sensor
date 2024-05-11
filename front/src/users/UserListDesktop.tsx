@@ -31,7 +31,7 @@ const UserListDesktop = ({ selectedRow }: UserListDesktopProps) => (
   <DatagridConfigurable
     rowClick="edit"
     rowSx={rowSx(selectedRow)}
-    bulkActionButtons={<UsersBulkActionButtons />}
+    // bulkActionButtons={<UsersBulkActionButtons />}
     sx={{
       "& .RaDatagrid-thead": {
         borderLeftColor: "transparent",
@@ -46,12 +46,9 @@ const UserListDesktop = ({ selectedRow }: UserListDesktopProps) => (
       },
     }}
   >
-    <DateField source="date" />
-    <CustomerReferenceField link={false} />
-    <ProductReferenceField source="product_id" link={false} />
-    <StarRatingField size="small" />
-    <TextField source="comment" />
-    <TextField source="status" />
+    <TextField source="name" />
+    <TextField source="username" />
+    <DateField source="createdAt" />
   </DatagridConfigurable>
 );
 
