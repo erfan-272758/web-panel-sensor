@@ -1,24 +1,14 @@
-import * as React from "react";
 import { useState } from "react";
 import Box from "@mui/material/Box";
-import LabelIcon from "@mui/icons-material/Label";
 
 import {
   useTranslate,
-  DashboardMenuItem,
   MenuItemLink,
   MenuProps,
   useSidebarState,
 } from "react-admin";
-
-import visitors from "../visitors";
-import orders from "../orders";
-import invoices from "../invoices";
-import products from "../products";
-import categories from "../categories";
-import reviews from "../reviews";
 import sensors from "../sensors";
-import SubMenu from "./SubMenu";
+import users from "../users";
 
 type MenuName = "menuCatalog" | "menuSales" | "menuCustomers";
 
@@ -127,6 +117,15 @@ const Menu = ({ dense = false }: MenuProps) => {
           dense={dense}
         />
       </SubMenu> */}
+      <MenuItemLink
+        to="/users"
+        state={{ _scrollToTop: true }}
+        primaryText={translate(`resources.users.name`, {
+          smart_count: 2,
+        })}
+        leftIcon={<users.icon />}
+        dense={dense}
+      />
       <MenuItemLink
         to="/sensors"
         state={{ _scrollToTop: true }}

@@ -78,6 +78,14 @@ export interface Sensor extends RaRecord {
   product_id: Identifier;
   comment: string;
 }
+export interface User extends RaRecord {
+  date: Date;
+  status: ReviewStatus;
+  customer_id: Identifier;
+  product_id: Identifier;
+  comment: string;
+}
+
 declare global {
   interface Window {
     restServer: any;

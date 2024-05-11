@@ -50,7 +50,10 @@ const customEnglishMessages: TranslationMessages = {
   },
   resources: {
     sensors: {
-      name: "sensors",
+      name: "Sensors",
+    },
+    users: {
+      name: "Users",
     },
     customers: {
       name: "Customer |||| Customers",
