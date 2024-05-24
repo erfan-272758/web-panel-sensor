@@ -9,7 +9,7 @@ import {
   useRedirect,
   useRecordContext,
 } from "react-admin";
-import { Sensor } from "../types";
+import { Device } from "../types";
 
 /**
  * This custom button demonstrate using a custom action to update data
@@ -18,22 +18,22 @@ const RejectButton = () => {
   const translate = useTranslate();
   const notify = useNotify();
   const redirectTo = useRedirect();
-  const record = useRecordContext<Sensor>();
+  const record = useRecordContext<Device>();
 
   const [reject, { isLoading }] = useUpdate(
-    "Sensors",
+    "Devices",
     { id: record.id, data: { status: "rejected" }, previousData: record },
     {
       mutationMode: "undoable",
       onSuccess: () => {
-        notify("resources.Sensors.notification.rejected_success", {
+        notify("resources.Devices.notification.rejected_success", {
           type: "info",
           undoable: true,
         });
-        redirectTo("/Sensors");
+        redirectTo("/devices");
       },
       onError: () => {
-        notify("resources.Sensors.notification.rejected_error", {
+        notify("resources.Devices.notification.rejected_error", {
           type: "error",
         });
       },
@@ -52,7 +52,7 @@ const RejectButton = () => {
       }
       disabled={isLoading}
     >
-      {translate("resources.Sensors.action.reject")}
+      {translate("resources.Devices.action.reject")}
     </Button>
   ) : (
     <span />

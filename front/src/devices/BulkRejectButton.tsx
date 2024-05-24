@@ -15,22 +15,22 @@ const noSelection: Identifier[] = [];
 const BulkRejectButton = () => {
   const { selectedIds = noSelection } = useListContext();
   const notify = useNotify();
-  const unselectAll = useUnselectAll("Sensors");
+  const unselectAll = useUnselectAll("Devices");
 
   const [updateMany, { isLoading }] = useUpdateMany(
-    "Sensors",
+    "Devices",
     { ids: selectedIds, data: { status: "rejected" } },
     {
       mutationMode: "undoable",
       onSuccess: () => {
-        notify("resources.Sensors.notification.approved_success", {
+        notify("resources.Devices.notification.approved_success", {
           type: "info",
           undoable: true,
         });
         unselectAll();
       },
       onError: () => {
-        notify("resources.Sensors.notification.approved_error", {
+        notify("resources.Devices.notification.approved_error", {
           type: "error",
         });
       },
@@ -39,7 +39,7 @@ const BulkRejectButton = () => {
 
   return (
     <Button
-      label="resources.Sensors.action.reject"
+      label="resources.Devices.action.reject"
       onClick={() => updateMany()}
       disabled={isLoading}
     >

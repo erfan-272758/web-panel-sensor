@@ -46,6 +46,66 @@ export default (type: string) => {
                 },
               };
             },
+            async getManyReference() {
+              return {
+                data: [
+                  {
+                    id: 1,
+                    name: "erfan",
+                    username: "erfan",
+                    createdAt: new Date(),
+                  },
+                  {
+                    id: 2,
+                    name: "hossein",
+                    username: "hossein",
+                    createdAt: new Date(),
+                  },
+                ],
+                total: 0,
+              };
+            },
+            async getMany() {
+              return await this.getManyReference();
+            },
+          };
+          console.log(resource, name, params);
+          return (dp as any)[name](resource, params);
+        }
+        if (resource === "devices") {
+          const dp = {
+            async getList() {
+              return {
+                data: [
+                  {
+                    id: 1,
+                    name: "device 1",
+                    owner: "erfan",
+                    sensors: 3,
+                    initialAt: new Date(),
+                  },
+                  {
+                    id: 2,
+                    name: "device 2",
+                    owner: "erfan",
+                    sensors: 1,
+                    initialAt: new Date(),
+                  },
+                ],
+                total: 2,
+              };
+            },
+            async getOne() {
+              return {
+                data: {
+                  id: 1,
+                  name: "device 1",
+                  owner: "erfan",
+                  sensors: 3,
+                  initialAt: new Date(),
+                },
+              };
+            },
           };
           return (dp as any)[name](resource, params);
         }

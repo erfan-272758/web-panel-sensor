@@ -37,7 +37,7 @@ const StarRatingField = ({ size = "large" }: FieldProps & OwnProps) => {
 };
 
 StarRatingField.defaultProps = {
-  label: "resources.Sensors.fields.rating",
+  label: "resources.Devices.fields.rating",
   source: "rating",
 };
 

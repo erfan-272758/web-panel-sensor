@@ -71,7 +71,7 @@ export interface Review extends RaRecord {
   product_id: Identifier;
   comment: string;
 }
-export interface Sensor extends RaRecord {
+export interface Device extends RaRecord {
   date: Date;
   status: ReviewStatus;
   customer_id: Identifier;

@@ -4,11 +4,11 @@ import orange from "@mui/material/colors/orange";
 import red from "@mui/material/colors/red";
 import { Identifier } from "react-admin";
 
-import { Sensor } from "./../types";
+import { Device } from "../types";
 
 const rowSx =
   (selectedRow?: Identifier) =>
-  (record: Sensor): SxProps => {
+  (record: Device): SxProps => {
     let style = {};
     if (!record) {
       return style;

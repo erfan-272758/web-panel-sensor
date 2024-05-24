@@ -52,6 +52,9 @@ const customEnglishMessages: TranslationMessages = {
     sensors: {
       name: "Sensors",
     },
+    devices: {
+      name: "Devices",
+    },
     users: {
       name: "Users",
       edit_title: "Edit User",

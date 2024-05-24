@@ -15,11 +15,11 @@ import rowSx from "./rowSx";
 import BulkAcceptButton from "./BulkAcceptButton";
 import BulkRejectButton from "./BulkRejectButton";
 
-export interface SensorListDesktopProps {
+export interface DeviceListDesktopProps {
   selectedRow?: Identifier;
 }
 
-const SensorsBulkActionButtons = () => (
+const DevicesBulkActionButtons = () => (
   <>
     <BulkAcceptButton />
     <BulkRejectButton />
@@ -27,11 +27,11 @@ const SensorsBulkActionButtons = () => (
   </>
 );
 
-const SensorListDesktop = ({ selectedRow }: SensorListDesktopProps) => (
+const DeviceListDesktop = ({ selectedRow }: DeviceListDesktopProps) => (
   <DatagridConfigurable
     rowClick="edit"
     rowSx={rowSx(selectedRow)}
-    bulkActionButtons={<SensorsBulkActionButtons />}
+    bulkActionButtons={<DevicesBulkActionButtons />}
     sx={{
       "& .RaDatagrid-thead": {
         borderLeftColor: "transparent",
@@ -46,13 +46,11 @@ const SensorListDesktop = ({ selectedRow }: SensorListDesktopProps) => (
       },
     }}
   >
-    <DateField source="date" />
-    <CustomerReferenceField link={false} />
-    <ProductReferenceField source="product_id" link={false} />
-    <StarRatingField size="small" />
-    <TextField source="comment" />
-    <TextField source="status" />
+    <TextField source="name" />
+    <TextField source="owner" />
+    <TextField source="sensors" />
+    <DateField source="initialAt" />
   </DatagridConfigurable>
 );
 
-export default SensorListDesktop;
+export default DeviceListDesktop;

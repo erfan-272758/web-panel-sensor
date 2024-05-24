@@ -9,7 +9,7 @@ import {
   useRedirect,
   useRecordContext,
 } from "react-admin";
-import { Sensor } from "./../types";
+import { Device } from "../types";
 
 /**
  * This custom button demonstrate using useUpdate to update data
@@ -18,22 +18,22 @@ const AcceptButton = () => {
   const translate = useTranslate();
   const notify = useNotify();
   const redirectTo = useRedirect();
-  const record = useRecordContext<Sensor>();
+  const record = useRecordContext<Device>();
 
   const [approve, { isLoading }] = useUpdate(
-    "Sensors",
+    "Devices",
     { id: record.id, data: { status: "accepted" }, previousData: record },
     {
       mutationMode: "undoable",
       onSuccess: () => {
-        notify("resources.Sensors.notification.approved_success", {
+        notify("resources.Devices.notification.approved_success", {
           type: "info",
           undoable: true,
         });
-        redirectTo("/Sensors");
+        redirectTo("/devices");
       },
       onError: () => {
-        notify("resources.Sensors.notification.approved_error", {
+        notify("resources.Devices.notification.approved_error", {
           type: "error",
         });
       },
@@ -51,7 +51,7 @@ const AcceptButton = () => {
       }
       disabled={isLoading}
     >
-      {translate("resources.Sensors.action.accept")}
+      {translate("resources.Devices.action.accept")}
     </Button>
   ) : (
     <span />

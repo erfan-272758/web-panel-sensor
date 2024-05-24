@@ -16,10 +16,10 @@ import {
 } from "react-admin";
 
 import AvatarField from "../visitors/AvatarField";
-import { Customer, Sensor } from "../types";
+import { Customer, Device } from "../types";
 
-export const SensorItem = () => {
-  const record = useRecordContext<Sensor>();
+export const DeviceItem = () => {
+  const record = useRecordContext<Device>();
   const createPath = useCreatePath();
   if (!record) {
     return null;
@@ -27,7 +27,7 @@ export const SensorItem = () => {
   return (
     <MuiLink
       to={createPath({
-        resource: "Sensors",
+        resource: "Devices",
         type: "edit",
         id: record.id,
       })}

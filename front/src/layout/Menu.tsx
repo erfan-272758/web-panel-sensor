@@ -7,7 +7,7 @@ import {
   MenuProps,
   useSidebarState,
 } from "react-admin";
-import sensors from "../sensors";
+import devices from "../devices";
 import users from "../users";
 
 type MenuName = "menuCatalog" | "menuSales" | "menuCustomers";
@@ -127,12 +127,12 @@ const Menu = ({ dense = false }: MenuProps) => {
         dense={dense}
       />
       <MenuItemLink
-        to="/sensors"
+        to="/devices"
         state={{ _scrollToTop: true }}
-        primaryText={translate(`resources.sensors.name`, {
+        primaryText={translate(`resources.devices.name`, {
           smart_count: 2,
         })}
-        leftIcon={<sensors.icon />}
+        leftIcon={<devices.icon />}
         dense={dense}
       />
     </Box>

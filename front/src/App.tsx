@@ -23,7 +23,7 @@ import Segments from "./segments/Segments";
 import visitors from "./visitors";
 import { themes, ThemeName } from "./themes/themes";
 import users from "./users";
-import sensors from "./sensors";
+import devices from "./devices";
 
 const i18nProvider = polyglotI18nProvider(
   (locale) => {
@@ -65,7 +65,7 @@ const App = () => {
       defaultTheme="light"
     >
       <Resource name="users" {...users} />
-      <Resource name="sensors" {...sensors} />
+      <Resource name="devices" {...devices} />
       <CustomRoutes>
         <Route path="/segments" element={<Segments />} />
       </CustomRoutes>

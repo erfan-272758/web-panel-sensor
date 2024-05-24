@@ -15,7 +15,7 @@ import { useLocation } from "react-router";
 
 import StarRatingInput from "./StarRatingInput";
 
-const SensorCreate = () => {
+const DeviceCreate = () => {
   const notify = useNotify();
   const redirect = useRedirect();
   const location = useLocation();
@@ -24,9 +24,9 @@ const SensorCreate = () => {
     const record = getRecordFromLocation(location);
     notify("ra.notification.created");
     if (record && record.product_id) {
-      redirect(`/products/${record.product_id}/Sensors`);
+      redirect(`/products/${record.product_id}/devices`);
     } else {
-      redirect(`/Sensors`);
+      redirect(`/devices`);
     }
   };
 
@@ -57,4 +57,4 @@ const SensorCreate = () => {
   );
 };
 
-export default SensorCreate;
+export default DeviceCreate;

@@ -1,0 +1,85 @@
+{
+  "UID": 452364189614589749072569058602895467,
+  "Name": "Test Sensor 1",
+  "Security Code": "eyqwio78678234tjhgbv",
+  "TZone": "+03:30",
+  "TSource": "GPS",
+  "Installation": {
+    "lat": "35.88",
+    "lon": "42.33",
+    "Operator ID": 3218974132479,
+    "Installation Time": "D2024.1.1T12:44:36",
+    "Cellular No": "+98999999999999",
+    "Cellular Operator": "MCI",
+    "Cert": "OK"
+  },
+  "Default User": "admin",
+  "Data Streams": 3,
+  "Stream Name": "Data From Sys",
+  "Stream1": {
+    "Name": " Acceleration",
+    "ID": 5374529843769,
+    "Data Points": 3,
+    "Class": "Accel",
+    "Data1": {
+      "Name": "X",
+      "Speed": 100,
+      "Logged": true
+    },
+    "Data2": {
+      "Name": "Y",
+      "Speed": 100,
+      "Logged": true
+    },
+    "Data3": {
+      "Name": "Z",
+      "Speed": 100,
+      "Logged": true
+    }
+  },
+  "Stream2": {
+    "Name": " Environment",
+    "ID": 53763788766959,
+    "Data Points": 2,
+    "Class": "Env",
+    "Data1": {
+      "Name": "Temp",
+      "Speed": "100S",
+      "Logged": true
+    },
+    "Data2": {
+      "Name": "Hue",
+      "Speed": "2M",
+      "Logged": true
+    }
+  },
+  "Stream3": {
+    "Name": " B Ses",
+    "ID": 894632897647896,
+    "Data Points": 1,
+    "Class": "Env",
+    "Data1": {
+      "Name": "Temp",
+      "Speed": "100S",
+      "Logged": true
+    }
+  },
+  "Outputs": 1,
+  "Output Name": "Data to Sys",
+  "Out1": {
+    "Name": " MAIN Motors",
+    "ID": 45236543657,
+    "Class": "OUT1",
+    "Channels": 2,
+    "Ch1": {
+      "Name": "Motor1",
+      "Type": "Latched",
+      "Logged": true
+    },
+    "Ch2": {
+      "Name": "Motor2",
+      "Type": "Momentory",
+      "Logged": true
+    }
+  }
+}

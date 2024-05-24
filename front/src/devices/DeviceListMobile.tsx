@@ -2,23 +2,23 @@ import * as React from "react";
 import { List } from "@mui/material";
 import { RecordContextProvider, useListContext } from "react-admin";
 
-import { SensorItem } from "./SensorItem";
-import { Sensor } from "../types";
+import { DeviceItem } from "./DeviceItem";
+import { Device } from "../types";
 
-const SensorListMobile = () => {
-  const { data, isLoading, total } = useListContext<Sensor>();
+const DeviceListMobile = () => {
+  const { data, isLoading, total } = useListContext<Device>();
   if (isLoading || Number(total) === 0) {
     return null;
   }
   return (
     <List sx={{ width: "calc(100vw - 33px)" }}>
-      {data.map((Sensor) => (
-        <RecordContextProvider value={Sensor} key={Sensor.id}>
-          <SensorItem />
+      {data.map((Device) => (
+        <RecordContextProvider value={Device} key={Device.id}>
+          <DeviceItem />
         </RecordContextProvider>
       ))}
     </List>
   );
 };
 
-export default SensorListMobile;
+export default DeviceListMobile;

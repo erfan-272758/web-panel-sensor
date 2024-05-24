@@ -3,7 +3,7 @@ import Icon from "@mui/icons-material/Stars";
 import { InputProps, useInput, useTranslate } from "react-admin";
 
 const StarRatingInput = (props: InputProps) => {
-  const { name = "resources.Sensors.fields.rating" } = props;
+  const { name = "resources.Devices.fields.rating" } = props;
   const { field } = useInput(props);
   const translate = useTranslate();
 

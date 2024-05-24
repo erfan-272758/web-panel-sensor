@@ -12,14 +12,14 @@ import {
 } from "react-admin";
 import AcceptButton from "./AcceptButton";
 import RejectButton from "./RejectButton";
-import { Sensor } from "../types";
+import { Device } from "../types";
 
-const SensorEditToolbar = (props: ToolbarProps) => {
+const DeviceEditToolbar = (props: ToolbarProps) => {
   const { resource } = props;
   const redirect = useRedirect();
   const notify = useNotify();
 
-  const record = useRecordContext<Sensor>(props);
+  const record = useRecordContext<Device>(props);
 
   if (!record) return null;
   return (
@@ -45,7 +45,7 @@ const SensorEditToolbar = (props: ToolbarProps) => {
                   messageArgs: { smart_count: 1 },
                   undoable: true,
                 });
-                redirect("list", "Sensors");
+                redirect("list", "Devices");
               },
             }}
             type="button"
@@ -57,4 +57,4 @@ const SensorEditToolbar = (props: ToolbarProps) => {
   );
 };
 
-export default SensorEditToolbar;
+export default DeviceEditToolbar;
