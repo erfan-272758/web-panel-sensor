@@ -25,16 +25,14 @@ const DeviceListActions = () => (
 
 const DeviceList = () => {
   return (
-    <Box display="flex">
-      <List
-        filters={DeviceFilters}
-        perPage={25}
-        sort={{ field: "date", order: "DESC" }}
-        actions={<DeviceListActions />}
-      >
-        <DeviceListDesktop />
-      </List>
-    </Box>
+    <List
+      filters={DeviceFilters}
+      perPage={25}
+      sort={{ field: "date", order: "DESC" }}
+      actions={<DeviceListActions />}
+    >
+      <DeviceListDesktop />
+    </List>
   );
 };
 

@@ -3,6 +3,7 @@ import {
   BulkDeleteButton,
   DatagridConfigurable,
   DateField,
+  EditButton,
   Identifier,
   TextField,
 } from "react-admin";
@@ -29,7 +30,7 @@ const DevicesBulkActionButtons = () => (
 
 const DeviceListDesktop = ({ selectedRow }: DeviceListDesktopProps) => (
   <DatagridConfigurable
-    rowClick="edit"
+    rowClick="show"
     rowSx={rowSx(selectedRow)}
     bulkActionButtons={<DevicesBulkActionButtons />}
     sx={{
@@ -49,7 +50,8 @@ const DeviceListDesktop = ({ selectedRow }: DeviceListDesktopProps) => (
     <TextField source="name" />
     <TextField source="owner" />
     <TextField source="sensors" />
-    <DateField source="initialAt" />
+    <DateField source="created_at" />
+    <EditButton />
   </DatagridConfigurable>
 );
 

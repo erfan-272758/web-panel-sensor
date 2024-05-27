@@ -1,6 +1,6 @@
 {
   "UID": 452364189614589749072569058602895467,
-  "Name": "Test Sensor 1",
+  "name": "Test Sensor 1",
   "Security Code": "eyqwio78678234tjhgbv",
   "TZone": "+03:30",
   "TSource": "GPS",
@@ -13,7 +13,7 @@
     "Cellular Operator": "MCI",
     "Cert": "OK"
   },
-  "Default User": "admin",
+  "owner": "admin",
   "Data Streams": 3,
   "Stream Name": "Data From Sys",
   "Stream1": {
