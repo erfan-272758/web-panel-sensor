@@ -1,0 +1,15 @@
+version: "3"
+services:
+  influx:
+    container_name: influx
+    image: influxdb:2.7.6-alpine
+    ports:
+      - 8086:8086
+    networks:
+      - back
+    volumes:
+      - ./influxDB/data:/var/lib/influxdb2
+      - ./influxDB/config:/etc/influxdb2
+
+networks:
+  back:
