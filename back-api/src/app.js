@@ -6,6 +6,7 @@ import cookieParser from "cookie-parser";
 import authRouter from "./routers/authRouter.js";
 import userRouter from "./routers/userRouter.js";
 import errorController from "./controllers/errorController.js";
+import deviceRouter from "./routers/deviceRouter.js";
 
 const app = express();
 
@@ -17,6 +18,7 @@ app.use(cookieParser());
 
 app.use("/api/v1", authRouter);
 app.use("/api/v1", userRouter);
+app.use("/api/v1", deviceRouter);
 
 app.use(errorController.errorCatch);
 
