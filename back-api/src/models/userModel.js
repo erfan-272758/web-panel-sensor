@@ -1,4 +1,5 @@
 import { Point } from "@influxdata/influxdb-client";
+import { DeleteAPI } from "@influxdata/influxdb-client-apis";
 import { db } from "../config.js";
 
 class UserModel {
@@ -23,6 +24,23 @@ class UserModel {
     writeClient.writePoint(point);
     return await writeClient.close();
   }
+  async deleteUser(id) {
+    const deleteApi = new DeleteAPI(db);
+    try {
+      await deleteApi.postDelete({
+        bucket: "default",
+        org: "organ",
+        body: {
+          start: new Date(0).toISOString(),
+          stop: new Date().toISOString(),
+          predicate: `_measurement=\"users\" and id=\"${id}\"`,
+        },
+      });
+      return true;
+    } catch (err) {
+      return false;
+    }
+  }
 
   readUser(query, notRemovePass) {
     const queryApi = this.getQueryClient();
@@ -34,7 +52,7 @@ class UserModel {
 
     const finalQuery = `
       from(bucket: "default")
-        |> range(start: -1h)
+        |> range(start: 1970-01-01)
         |> filter(fn: (r) => r._measurement == "users" ${
           parsedQuery ? `and ${parsedQuery}` : ""
         })

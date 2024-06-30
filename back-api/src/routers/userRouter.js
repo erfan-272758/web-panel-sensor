@@ -5,6 +5,7 @@ const userRouter = Router();
 
 userRouter
   .get("/user", protect, userController.getAll)
+  .get("/user/:id", protect, userController.getOne)
   .post("/user", protect, userController.createOne)
   .put("/user/:id", protect, userController.updateOne)
   .delete("/user/:id", protect, userController.deleteOne);

@@ -14,6 +14,7 @@ export default async function bootstrap() {
       id: crypto.randomUUID(),
       username: adminUsername,
       password: adminPassword,
+      name: adminUsername,
       role: "admin",
     });
     console.log("[prepare]", "create admin user");

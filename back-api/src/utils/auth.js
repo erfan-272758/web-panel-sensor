@@ -17,5 +17,8 @@ export function verifyToken(token) {
 }
 
 export function tokenExtractor(req) {
-  return req.headers.authorization?.split("Bearer")?.[1] || req.cookies.auth;
+  return (
+    (req.headers.authorization?.split("Bearer")?.[1] || req.cookies.auth) ??
+    ""
+  ).trim();
 }
