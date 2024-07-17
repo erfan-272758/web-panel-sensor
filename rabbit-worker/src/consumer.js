@@ -6,8 +6,8 @@ import dataController from "../controller/dataController.js";
 async function startConsumer() {
   const host = getEnv("host");
   const port = getEnv("port");
-  const username = getEnv("username");
-  const password = getEnv("password");
+  const username = getEnv("rabbit-user");
+  const password = getEnv("rabbit-pass");
   try {
     // Connect to RabbitMQ server
     const connection = await amqp.connect({
@@ -27,13 +27,7 @@ async function startConsumer() {
     console.log("Consumer started. Waiting for messages...");
 
     // Consume messages from the queue
-    channel.consume(
-      initQ,
-      (m) => {
-        m.content.toString("utf-8");
-      },
-      initialController(channel)
-    );
+    channel.consume(initQ, initialController(channel));
     channel.consume(dataQ, dataController(channel));
   } catch (error) {
     console.error("Error:", error);

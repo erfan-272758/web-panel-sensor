@@ -1,3 +1,3 @@
 export function transformMsg(msg) {
-  return JSON.parse(msg.toString("utf-8"));
+  return JSON.parse(msg.content.toString("utf-8"));
 }

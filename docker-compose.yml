@@ -20,9 +20,17 @@ services:
     - worker
     volumes:
       - ./rabbitmq/data:/var/lib/rabbitmq  # Persist data on the host machine
+      - ./rabbitmq/init.sh:/usr/local/bin/init.sh
     environment:
       - RABBITMQ_DEFAULT_USER=admin
       - RABBITMQ_DEFAULT_PASS=admin
+      - RABBITMQ_DEFAULT_VHOST=/
+      - RABBITMQ_MANAGEMENT_LOAD_DEFINITIONS=/etc/rabbitmq/definitions.json
+      - RABBIT_USER=sensor
+      - RABBIT_PASS=TOKEN
+      - RABBIT_PID_FILE=/var/lib/rabbitmq/mnesia/rabbitmq
+    command: 
+    - "/usr/local/bin/init.sh"
 
 networks:
   back:
