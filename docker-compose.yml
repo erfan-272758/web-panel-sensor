@@ -11,5 +11,19 @@ services:
       - ./influxDB/data:/var/lib/influxdb2
       - ./influxDB/config:/etc/influxdb2
 
+  rabbitmq:
+    image: rabbitmq:3.13.4-management
+    ports:
+      - 5672:5672  # RabbitMQ default port
+      - 15672:15672  # RabbitMQ management UI port
+    networks:
+    - worker
+    volumes:
+      - ./rabbitmq/data:/var/lib/rabbitmq  # Persist data on the host machine
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=admin
+
 networks:
   back:
+  worker:

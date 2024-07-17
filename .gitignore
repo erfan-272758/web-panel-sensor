@@ -22,3 +22,6 @@
 
 # influx data
 influxDB/data
+
+# rabbitmq data
+rabbitmq/data
