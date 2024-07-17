@@ -1,0 +1,17 @@
+{
+  "name": "ws-worker",
+  "version": "1.0.0",
+  "main": "server.js",
+  "type": "module",
+  "license": "MIT",
+  "scripts": {
+    "dev": "nodemon server.js"
+  },
+  "dependencies": {
+    "@influxdata/influxdb-client": "^1.33.2",
+    "@influxdata/influxdb-client-apis": "^1.33.2",
+    "dotenv": "^16.4.5",
+    "nodemon": "^3.1.4",
+    "socket.io": "^4.7.5"
+  }
+}
