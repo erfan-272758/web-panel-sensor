@@ -3,34 +3,41 @@ import { DeleteAPI } from "@influxdata/influxdb-client-apis";
 import { db } from "../config.js";
 import bfs from "../utils/bfs.js";
 
-export const sensorSample = {
-  uid: "",
+export const deviceSample = {
+  id: "",
   name: "",
-  device: "",
-  security_code: "",
-  tZone: "+03:30",
-  tSource: "GPS",
-  inst_lat: 0,
-  inst_lon: 0,
-  inst_operator_id: 0,
-  inst_time: "",
-  inst_cellular_no: "",
-  inst_cellular_operator: "",
-  class: "",
+  owner: "",
+  streams: [
+    {
+      name: "",
+      protocol: "",
+      port: "",
+      data_type: "",
+    },
+  ],
 };
 
-class SensorModel {
+class DeviceModel {
   getWriteClient() {
     return db.getWriteApi("organ", "default", "ms");
   }
   getQueryClient() {
     return db.getQueryApi("organ");
   }
-  async writeSensor(sensor) {
-    const point = new Point("sensor");
+  async writeDevice(device) {
+    const point = new Point("devices");
 
-    for (const key in sensor) {
-      const value = sensor[key];
+    // convert array
+    // bfs(device, ({ parent, key, value }) => {
+    //   if (!Array.isArray(value)) return;
+    //   value
+    //     .map((v, i) => [`${key}_${i}`, v])
+    //     .forEach(([k, v]) => (parent[k] = v));
+    //   delete parent[key];
+    // });
+
+    for (const key in device) {
+      const value = device[key];
       point.tag(key, typeof value === "object" ? JSON.stringify(value) : value);
     }
     point.booleanField("active", true);
@@ -41,8 +48,8 @@ class SensorModel {
     writeClient.writePoint(point);
     return await writeClient.close();
   }
-  async deleteSensor(query) {
-    const parsedQ = `_measurement=\"sensors\" and ${Object.entries(query)
+  async deleteDevice(query) {
+    const parsedQ = `_measurement=\"devices\" and ${Object.entries(query)
       .map(([k, v]) => `${k}=\"${v}\"`)
       .join(" and ")} `;
 
@@ -62,7 +69,7 @@ class SensorModel {
       return false;
     }
   }
-  readSensor(query) {
+  readDevice(query) {
     const queryApi = this.getQueryClient();
 
     // convert extraKeys
@@ -80,7 +87,7 @@ class SensorModel {
     const finalQuery = `
       from(bucket: "default")
         |> range(start: 1970-01-01)
-        |> filter(fn: (r) => r._measurement == "sensors" ${
+        |> filter(fn: (r) => r._measurement == "devices" ${
           parsedQuery ? `and ${parsedQuery}` : ""
         })
     `;
@@ -98,8 +105,8 @@ class SensorModel {
       const result = [];
       queryApi.queryRows(finalQuery, {
         next(row, tableMeta) {
-          const sensor = tableMeta.toObject(row);
-          result.push(sensor);
+          const device = tableMeta.toObject(row);
+          result.push(device);
         },
         error(error) {
           reject(error);
@@ -113,5 +120,5 @@ class SensorModel {
   }
 }
 
-const sensorModel = new SensorModel();
-export default sensorModel;
+const deviceModel = new DeviceModel();
+export default deviceModel;
