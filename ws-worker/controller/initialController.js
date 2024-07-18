@@ -13,7 +13,7 @@ export default function initialController(socket) {
       //   check device
       const d = (await deviceModel.readDevice({ id: data.device }))?.[0];
       if (!d) {
-        return cb({ status: "failed" });
+        return cb({ status: "failed", message: "device id is wrong" });
       }
 
       await sensorModel.writeSensor(data);

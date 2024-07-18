@@ -51,7 +51,6 @@ services:
       - rabbitmq
     restart: always
 
-
   ws-worker:
     container_name: ws-worker
     build:
