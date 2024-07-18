@@ -5,7 +5,7 @@
 rabbitmqctl add_user $RABBIT_USER $RABBIT_PASS 2>/dev/null ; \
 rabbitmqctl set_user_tags $RABBIT_USER administrator ; \
 rabbitmqctl set_permissions -p / $RABBIT_USER  ".*" ".*" ".*" ; \
-echo "*** User '$RABBIT_USER' with password '$RABBIT_PASS' completed. ***" ; \
+echo "*** User '$RABBIT_USER' completed. ***" ; \
 echo "*** Log in the WebUI at port 15672 (example: http:/localhost:15672) ***") &
 
 # $@ is used to pass arguments to the rabbitmq-server command.

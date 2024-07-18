@@ -12,12 +12,13 @@ services:
       - ./influxDB/config:/etc/influxdb2
 
   rabbitmq:
+    container_name: rabbitmq
     image: rabbitmq:3.13.4-management
     ports:
       - 5672:5672  # RabbitMQ default port
       - 15672:15672  # RabbitMQ management UI port
     networks:
-    - worker
+    - queue
     volumes:
       - ./rabbitmq/data:/var/lib/rabbitmq  # Persist data on the host machine
       - ./rabbitmq/init.sh:/usr/local/bin/init.sh
@@ -32,6 +33,82 @@ services:
     command: 
     - "/usr/local/bin/init.sh"
 
+  rabbit-worker:
+    container_name: rabbit-worker
+    build:
+      context: rabbit-worker
+      dockerfile: Dockerfile
+      target: dev
+    volumes:
+      - ./rabbit-worker:/app
+    networks:
+      - back
+      - queue
+    env_file:
+      - ./rabbit-worker/.env.local
+    depends_on:
+      - influx
+      - rabbitmq
+    restart: always
+
+
+  ws-worker:
+    container_name: ws-worker
+    build:
+      context: ws-worker
+      dockerfile: Dockerfile
+      target: dev
+    volumes:
+      - ./ws-worker:/app
+    networks:
+      - back
+    ports:
+      - 2780:2780
+    env_file:
+      - ./ws-worker/.env.local
+    depends_on:
+      - influx
+    restart: always
+
+  back-api:
+    container_name: back-api
+    build:
+      context: back-api
+      dockerfile: Dockerfile
+      target: dev
+    volumes:
+      - ./back-api:/app
+    networks:
+      - back
+      - api
+    ports:
+      - 2781:2781
+    env_file:
+      - ./back-api/.env.local
+    depends_on:
+      - influx
+    restart: always
+
+  front:
+    container_name: front
+    build:
+      context: front
+      dockerfile: Dockerfile
+      target: dev
+    volumes:
+      - ./front:/app
+    networks:
+      - api
+    ports:
+      - 8000:8000
+    env_file:
+      - ./front/.env.local
+    depends_on:
+      - back-api
+    restart: always
+
+
 networks:
+  api:
   back:
-  worker:
+  queue:

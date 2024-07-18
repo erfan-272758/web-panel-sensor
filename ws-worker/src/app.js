@@ -11,6 +11,8 @@ const io = new Server(port, {
   path: "/ws",
 });
 
+console.log(`ws server listen on :${port}`);
+
 // Socket.IO event handlers
 io.on("connection", (socket) => {
   const t = socket.handshake.headers.authorization;

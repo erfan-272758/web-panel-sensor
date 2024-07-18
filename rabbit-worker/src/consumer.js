@@ -31,6 +31,7 @@ async function startConsumer() {
     channel.consume(dataQ, dataController(channel));
   } catch (error) {
     console.error("Error:", error);
+    process.exit(1);
   }
 }
 
