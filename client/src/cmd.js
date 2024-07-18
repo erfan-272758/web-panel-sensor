@@ -13,6 +13,10 @@ const rabbit_user = getEnv("rabbit-user");
 export async function handleCmd(cmd = "") {
   const sCmd = cmd.split(" ");
   switch (sCmd[0]?.toLowerCase()) {
+    case "help":
+    case "h":
+      getHelp();
+      break;
     case "ws":
       switch (sCmd[1]?.toLowerCase()) {
         case "initial":
@@ -45,7 +49,7 @@ export async function handleCmd(cmd = "") {
       break;
 
     default:
-      console.log("Invalid command, it must start with 'ws' or 'rabbit'");
+      console.log("Invalid command, your protocol must be 'ws' or 'rabbit'");
       break;
   }
 }
@@ -150,4 +154,29 @@ async function rabbitDataHandler(uid, c = "") {
   } catch (err) {
     console.log("Error:", err.message);
   }
+}
+
+function getHelp() {
+  const h = `
+    <protocol> <action> ... data
+    
+    Protocols:
+    ws
+    rabbit
+
+    Actions:
+    initial
+    data
+
+    Data:
+      for initial:
+      <device-id> <class-name>
+
+      for data:
+      <sensor-uid> <class-name>
+
+    Example:
+    ws initial abc Env
+    `;
+  console.log(h);
 }
