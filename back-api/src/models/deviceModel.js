@@ -7,14 +7,6 @@ export const deviceSample = {
   id: "",
   name: "",
   owner: "",
-  streams: [
-    {
-      name: "",
-      protocol: "",
-      port: "",
-      data_type: "",
-    },
-  ],
 };
 
 class DeviceModel {
@@ -26,15 +18,6 @@ class DeviceModel {
   }
   async writeDevice(device) {
     const point = new Point("devices");
-
-    // convert array
-    // bfs(device, ({ parent, key, value }) => {
-    //   if (!Array.isArray(value)) return;
-    //   value
-    //     .map((v, i) => [`${key}_${i}`, v])
-    //     .forEach(([k, v]) => (parent[k] = v));
-    //   delete parent[key];
-    // });
 
     for (const key in device) {
       const value = device[key];

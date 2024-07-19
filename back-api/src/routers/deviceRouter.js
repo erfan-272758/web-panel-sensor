@@ -9,6 +9,11 @@ deviceRouter
   .get("/device/:id", protect, deviceController.getOne)
   .post("/device", protect, deviceController.create)
   .put("/device/:id", protect, deviceController.updateOne)
-  .delete("/device/:id", protect, deviceController.deleteOne);
+  .delete("/device/:id", protect, deviceController.deleteOne)
+  .delete(
+    "/device/:deviceId/:sensorId",
+    protect,
+    deviceController.deleteSensor
+  );
 
 export default deviceRouter;

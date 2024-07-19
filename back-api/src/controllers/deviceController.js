@@ -2,6 +2,8 @@ import crypto from "crypto";
 import { HttpError } from "../errors/HttpError.js";
 import deviceModel from "../models/deviceModel.js";
 import transformDecorator from "../decorator/transformDecorator.js";
+import sensorModel from "../models/sensorModel.js";
+import dataModel from "../models/dataModel.js";
 
 class DeviceController {
   async getAll(req, res, next) {
@@ -17,7 +19,16 @@ class DeviceController {
 
     // exec
     const devices = await deviceModel.readDevice(query);
-    return res.json(transformDecorator({ data: devices }));
+
+    // sensors
+    const dWithS = await Promise.all(
+      devices.map(async (d) => ({
+        ...d,
+        sensors: (await sensorModel.readSensor({ device: d.id })).length,
+      }))
+    );
+
+    return res.json(transformDecorator({ data: dWithS }));
   }
   async getOne(req, res, next) {
     const user = req.user;
@@ -34,6 +45,9 @@ class DeviceController {
     const [device] = await deviceModel.readDevice(query);
 
     if (!device) return next(new HttpError(404, "device not found"));
+
+    // add sensors
+    device.sensors = await sensorModel.readSensor({ device: device.id });
 
     return res.json(transformDecorator({ data: device }));
   }
@@ -57,7 +71,6 @@ class DeviceController {
         req.user.role === "admin"
           ? req.body.owner || req.user.username
           : req.user.username,
-      streams: req.body.streams ?? [],
     };
 
     await deviceModel.writeDevice(body);
@@ -85,12 +98,11 @@ class DeviceController {
       return next(new HttpError(500, "Can not update please try again later"));
 
     // merge
-    const { name, owner, streams } = req.body;
+    const { name, owner } = req.body;
     const newDevice = {
       id: device.id,
       name: name || device.name,
       owner: user.role === "admin" ? owner || device.owner : device.owner,
-      streams: streams || device.streams,
     };
 
     // create
@@ -112,6 +124,55 @@ class DeviceController {
     // exec
     const canDelete = await deviceModel.deleteDevice(query);
     if (!canDelete) return next(new HttpError(500, "can not delete device"));
+
+    // get sensors
+    const sensors = await sensorModel.readSensor({ device: id });
+
+    await Promise.all(
+      sensors.map(async (s) => {
+        // delete sensors
+        await sensorModel.deleteSensor({ uid: s.uid });
+        // delete data
+        await dataModel.deleteData({ class: s.class, sensor_id: s.uid });
+      })
+    );
+
+    return res.status(204).send();
+  }
+  async deleteSensor(req, res, next) {
+    const user = req.user;
+    const { deviceId, sensorId } = req.params;
+    const query = {
+      id: deviceId,
+    };
+
+    // add ownership
+    if (user.role !== "admin") query.owner = user.username;
+
+    const sq = {
+      device: deviceId,
+      uid: sensorId,
+    };
+
+    // get device
+    const [device] = await deviceModel.readDevice(query);
+    if (!device) {
+      return next(new HttpError(404, "device not found"));
+    }
+
+    // get sensor
+    const [sensor] = await sensorModel.readSensor(sq);
+    if (!sensor) {
+      return next(new HttpError(404, "sensor not found"));
+    }
+
+    // delete sensor
+    const canDelete = await sensorModel.deleteSensor(sq);
+    if (!canDelete) return next(new HttpError(500, "can not delete sensor"));
+
+    // delete data
+    await dataModel.deleteData({ class: sensor.class, sensor_id: sensor.uid });
+
     return res.status(204).send();
   }
 }
