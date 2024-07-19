@@ -158,25 +158,34 @@ async function rabbitDataHandler(uid, c = "") {
 
 function getHelp() {
   const h = `
-    <protocol> <action> ... data
+    <protocol> <action> <data>
     
-    Protocols:
-    ws
-    rabbit
+    ------------------------------------------------------------------------------
+    | Protocols:                                                                 |
+    |              'ws' => communicate to ws-worker with ws protocol             |
+    |              'rabbit' => communicate to rabbitmq server with amqp protocol |
+    ------------------------------------------------------------------------------
 
-    Actions:
-    initial
-    data
+    ------------------------------------------------------------------------------
+    | Actions:                                                                   |
+    |              'initial' => initial sensor to server                         |
+    |              'data'    => send some sample data base on sensor class       |
+    ------------------------------------------------------------------------------
 
-    Data:
-      for initial:
-      <device-id> <class-name>
+    ------------------------------------------------------------------------------
+    | Data:                                                                      |
+    |              <device-id> <class-name> => use this pattern when you have    |
+    |                                          'initial' action                  |
+    |              <sensor-uid> <class-name> => use this pattern when you have   |
+    |                                          'data' action                     |
+    ------------------------------------------------------------------------------
 
-      for data:
-      <sensor-uid> <class-name>
-
-    Example:
-    ws initial abc Env
+    ------------------------------------------------------------------------------
+    | Example:                                                                   |
+    |              ws initial abc Env => communicate with protocol 'ws' to       |
+    |                                    initial sensor to device 'abc', with    |
+    |                                    class 'Env'                             |
+    ------------------------------------------------------------------------------
     `;
   console.log(h);
 }
