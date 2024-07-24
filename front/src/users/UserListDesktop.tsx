@@ -48,7 +48,7 @@ const UserListDesktop = ({ selectedRow }: UserListDesktopProps) => (
   >
     <TextField source="name" />
     <TextField source="username" />
-    <DateField source="created_at" />
+    <DateField source="createdAt" />
   </DatagridConfigurable>
 );
 

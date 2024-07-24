@@ -24,8 +24,14 @@ const authProvider: AuthProvider = {
   checkAuth: async () => {
     const token = localStorage.getItem("token");
     if (!token) throw new Error("token not exists");
-    const response = await api.get("/auth/login");
-    Store.user = response.data;
+    let user = localStorage.getItem("user");
+    if (!user) {
+      const response = await api.get("/auth/login");
+      user = response.data.user;
+    } else {
+      user = JSON.parse(user);
+    }
+    Store.user = user;
     Store.token = token;
   },
   getPermissions: () => Promise.resolve(),

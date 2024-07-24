@@ -1,6 +1,7 @@
 import { DataProvider } from "react-admin";
 import fakeServerFactory from "../fakeServer";
 import userProvider from "./user";
+import deviceProvider from "./device";
 
 export default (type: string) => {
   // The fake servers require to generate data, which can take some time.
@@ -19,63 +20,8 @@ export default (type: string) => {
         switch (resource) {
           case "users":
             return (userProvider as any)[name](resource, params);
-        }
-        if (resource === "users") {
-          const dp = {
-            async getList() {
-              return {
-                data: [
-                  {
-                    id: 1,
-                    name: "erfan",
-                    username: "erfan",
-                    created_at: new Date(),
-                  },
-                  {
-                    id: 2,
-                    name: "hossein",
-                    username: "hossein",
-                    created_at: new Date(),
-                  },
-                ],
-                total: 2,
-              };
-            },
-            async getOne() {
-              return {
-                data: {
-                  id: 1,
-                  name: "erfan",
-                  username: "erfan",
-                  created_at: new Date(),
-                },
-              };
-            },
-            async getManyReference() {
-              return {
-                data: [
-                  {
-                    id: 1,
-                    name: "erfan",
-                    username: "erfan",
-                    created_at: new Date(),
-                  },
-                  {
-                    id: 2,
-                    name: "hossein",
-                    username: "hossein",
-                    created_at: new Date(),
-                  },
-                ],
-                total: 0,
-              };
-            },
-            async getMany() {
-              return await this.getManyReference();
-            },
-          };
-          console.log(resource, name, params);
-          return (dp as any)[name](resource, params);
+          case "devices":
+            return (deviceProvider as any)[name](resource, params);
         }
         if (resource === "devices") {
           const dp = {
@@ -87,14 +33,14 @@ export default (type: string) => {
                     name: "device 1",
                     owner: "erfan",
                     sensors: 3,
-                    created_at: new Date(),
+                    createdAt: new Date(),
                   },
                   {
                     id: 2,
                     name: "device 2",
                     owner: "erfan",
                     sensors: 1,
-                    created_at: new Date(),
+                    createdAt: new Date(),
                   },
                 ],
                 total: 2,
@@ -136,7 +82,7 @@ export default (type: string) => {
                       data_type: "integer",
                     },
                   ],
-                  created_at: new Date(),
+                  createdAt: new Date(),
                 },
               };
             },

@@ -1,57 +1,39 @@
 import * as React from "react";
 import {
-  SimpleForm,
   Create,
   ReferenceInput,
   TextInput,
-  DateInput,
   AutocompleteInput,
-  required,
   useNotify,
   useRedirect,
-  getRecordFromLocation,
+  required,
+  SimpleForm,
 } from "react-admin";
-import { useLocation } from "react-router";
-
-import StarRatingInput from "./StarRatingInput";
 
 const DeviceCreate = () => {
   const notify = useNotify();
   const redirect = useRedirect();
-  const location = useLocation();
 
   const onSuccess = (_: any) => {
-    const record = getRecordFromLocation(location);
     notify("ra.notification.created");
-    if (record && record.product_id) {
-      redirect(`/products/${record.product_id}/devices`);
-    } else {
-      redirect(`/devices`);
-    }
+    redirect(`/devices`);
   };
 
   return (
     <Create mutationOptions={{ onSuccess }}>
       <SimpleForm defaultValues={{ status: "pending" }}>
-        <ReferenceInput source="customer_id" reference="customers">
-          <AutocompleteInput validate={required()} />
+        {/* Name */}
+        <TextInput source="name" isRequired validate={required()} />
+
+        {/* Owner */}
+        <ReferenceInput reference="users" source="owner">
+          <AutocompleteInput
+            optionText={(user) => user.username}
+            optionValue="username"
+            isRequired
+            validate={required()}
+          />
         </ReferenceInput>
-        <ReferenceInput source="product_id" reference="products">
-          <AutocompleteInput optionText="reference" validate={required()} />
-        </ReferenceInput>
-        <DateInput
-          source="date"
-          defaultValue={new Date()}
-          validate={required()}
-        />
-        <StarRatingInput source="rating" defaultValue={2} />
-        <TextInput
-          source="comment"
-          multiline
-          fullWidth
-          resettable
-          validate={required()}
-        />
       </SimpleForm>
     </Create>
   );

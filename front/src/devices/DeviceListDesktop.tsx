@@ -3,18 +3,18 @@ import {
   BulkDeleteButton,
   DatagridConfigurable,
   DateField,
+  DeleteButton,
   EditButton,
   Identifier,
   TextField,
 } from "react-admin";
 
-import ProductReferenceField from "../products/ProductReferenceField";
-import CustomerReferenceField from "../visitors/CustomerReferenceField";
-import StarRatingField from "./StarRatingField";
 import rowSx from "./rowSx";
 
 import BulkAcceptButton from "./BulkAcceptButton";
 import BulkRejectButton from "./BulkRejectButton";
+import { IconButton } from "@mui/material";
+import CopyBtn from "../UI/CopyBtn";
 
 export interface DeviceListDesktopProps {
   selectedRow?: Identifier;
@@ -40,7 +40,7 @@ const DeviceListDesktop = ({ selectedRow }: DeviceListDesktopProps) => (
         borderLeftStyle: "solid",
       },
       "& .column-comment": {
-        maxWidth: "18em",
+        maxWidth: "15em",
         overflow: "hidden",
         textOverflow: "ellipsis",
         whiteSpace: "nowrap",
@@ -50,8 +50,10 @@ const DeviceListDesktop = ({ selectedRow }: DeviceListDesktopProps) => (
     <TextField source="name" />
     <TextField source="owner" />
     <TextField source="sensors" />
-    <DateField source="created_at" />
+    <DateField source="createdAt" />
+    <CopyBtn getContent={(r) => r.id} />
     <EditButton />
+    <DeleteButton />
   </DatagridConfigurable>
 );
 

@@ -53,17 +53,6 @@ class DeviceController {
   }
   async create(req, res, next) {
     if (!req.body.name) return next(new HttpError(400, "name is required"));
-    if (
-      !req.body.streams ||
-      !Array.isArray(req.body.streams) ||
-      !req.body.streams[0]
-    )
-      return next(
-        new HttpError(
-          400,
-          "streams is required and must be an array with at least one item"
-        )
-      );
     const body = {
       id: crypto.randomUUID(),
       name: req.body.name,
@@ -75,7 +64,9 @@ class DeviceController {
 
     await deviceModel.writeDevice(body);
 
-    return res.status(201).json({ message: "device successfully created" });
+    const [d] = await deviceModel.readDevice({ id: body.id });
+
+    return res.status(201).json({ data: transformDecorator(d) });
   }
   async updateOne(req, res, next) {
     const user = req.user;
@@ -108,7 +99,9 @@ class DeviceController {
     // create
     await deviceModel.writeDevice(newDevice);
 
-    return res.json({ message: "update successfully" });
+    const [d] = await deviceModel.readDevice({ id: newDevice.id });
+
+    return res.json({ data: transformDecorator(d) });
   }
   async deleteOne(req, res, next) {
     const user = req.user;

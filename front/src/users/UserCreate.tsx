@@ -19,10 +19,8 @@ import { PasswordInput } from "react-admin";
 const UserCreate = () => {
   const notify = useNotify();
   const redirect = useRedirect();
-  const location = useLocation();
 
   const onSuccess = (_: any) => {
-    const record = getRecordFromLocation(location);
     notify("ra.notification.created");
     redirect(`/users`);
   };
@@ -30,18 +28,26 @@ const UserCreate = () => {
   return (
     <Create mutationOptions={{ onSuccess }}>
       <SimpleForm defaultValues={{ status: "pending" }}>
-        <TextInput source="name" fullWidth resettable validate={required()} />
+        <TextInput
+          source="name"
+          fullWidth
+          resettable
+          validate={required()}
+          isRequired
+        />
         <TextInput
           source="username"
           fullWidth
           resettable
           validate={required()}
+          isRequired
         />
         <PasswordInput
           source="password"
           fullWidth
           resettable
           validate={required()}
+          isRequired
         />
       </SimpleForm>
     </Create>

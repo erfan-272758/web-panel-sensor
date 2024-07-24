@@ -66,7 +66,7 @@ export default function DeviceShow(props: any) {
             </Stack>
           </Card>
           <TextField source="owner" />
-          <DateField label="Creation date" source="created_at" />
+          <DateField label="Creation date" source="createdAt" />
         </Tab>
         <Tab label="Sensors">
           <ArrayField source="sensors" sortable label={false}>

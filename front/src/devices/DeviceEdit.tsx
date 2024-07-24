@@ -11,7 +11,9 @@ import {
   PrevNextButtons,
   ReferenceField,
   ReferenceInput,
+  required,
   SelectInput,
+  SimpleForm,
   SimpleFormIterator,
   TextField,
   TextInput,
@@ -60,17 +62,21 @@ const Spacer = () => <Box mb={1}>&nbsp;</Box>;
 const DeviceForm = () => {
   const translate = useTranslate();
   return (
-    <Form>
+    <SimpleForm defaultValues={{ status: "pending" }}>
       {/* Name */}
-      <TextInput source="name" />
+      <TextInput source="name" isRequired validate={required()} />
 
       {/* Owner */}
       <ReferenceInput reference="users" source="owner" isRequired>
-        <AutocompleteInput optionText={(user) => user.name} />
+        <AutocompleteInput
+          optionText={(user) => user.username}
+          optionValue="username"
+          validate={required()}
+        />
       </ReferenceInput>
 
       {/* Streams */}
-      <ArrayInput source="streams">
+      {/* <ArrayInput source="streams">
         <SimpleFormIterator>
           <TextInput source="name" />
           <NumberInput source="port" required />
@@ -107,8 +113,8 @@ const DeviceForm = () => {
             ]}
           />
         </SimpleFormIterator>
-      </ArrayInput>
-    </Form>
+      </ArrayInput> */}
+    </SimpleForm>
   );
 };
 
