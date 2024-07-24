@@ -85,16 +85,7 @@ const Login = () => {
               <LockIcon />
             </Avatar>
           </Box>
-          <Box
-            sx={{
-              marginTop: "1em",
-              display: "flex",
-              justifyContent: "center",
-              color: (theme) => theme.palette.grey[500],
-            }}
-          >
-            Hint: demo / demo
-          </Box>
+
           <Box sx={{ padding: "0 1em 1em 1em" }}>
             <Box sx={{ marginTop: "1em" }}>
               <TextInput
