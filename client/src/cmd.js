@@ -78,7 +78,7 @@ async function wsInitHandler(device = "", c = "") {
 
   const socket = getWsSocket();
   try {
-    const response = await socket.emitWithAck("initial", s);
+    const response = await socket.timeout(5000).emitWithAck("initial", s);
     if (response.status !== "success") {
       throw new Error(response.message ?? "somethings went wrong");
     }
@@ -92,9 +92,11 @@ async function wsInitHandler(device = "", c = "") {
 async function wsDataHandler(uid, c = "") {
   const socket = getWsSocket();
   const payloads = generatePayload(c);
+  if (payloads == null) return;
+
   try {
     for (const payload of payloads) {
-      const response = await socket.emitWithAck("data", {
+      const response = await socket.timeout(5000).emitWithAck("data", {
         uid,
         class: c,
         payload,
@@ -132,6 +134,8 @@ async function mqttDataHandler(uid, c = "") {
   try {
     const channel = await getRabbitChan();
     const payloads = generatePayload(c);
+    if (payloads == null) return;
+
     for (const payload of payloads) {
       const isSend = channel.sendToQueue(
         "data",
