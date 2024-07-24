@@ -1,9 +1,11 @@
 import deviceModel from "../model/deviceModel.js";
 import sensorModel from "../model/sensorModel.js";
+import { validateClass } from "../utils/validation.js";
 
 export default function initialController(socket) {
   return async (data, cb) => {
     try {
+      if (!validateClass(data.class)) throw new Error("Invalid class");
       const uid = data.uid;
       const s = (await sensorModel.readSensor({ uid }))?.[0];
       if (s) {

@@ -24,7 +24,7 @@ export function generatePayload(c = "") {
       return null;
   }
 
-  const base = new Date();
+  const base = new Date(Date.now() - 24 * 60 * 60 * 1000);
   return data.map((d) => {
     base.setSeconds(base.getSeconds() + 1);
     return { ...d, at: base.toISOString() };
@@ -35,7 +35,7 @@ function envData() {
   const data = [];
   for (let i = 0; i < 100; i++) {
     data.push({
-      tmp: i / (randomInt(4) + 1) + 25,
+      temp: i / (randomInt(4) + 1) + 25,
       hum: i / ((randomInt(4) + 1) * 100),
     });
   }

@@ -53,24 +53,33 @@ export async function handleCmd(cmd = "") {
       break;
   }
 }
-
+let wsSocket = null;
+let rabbitChan = null;
 function getWsSocket() {
-  return io(`ws://${ws_host}:${ws_port}`, {
+  if (wsSocket != null) return wsSocket;
+
+  wsSocket = io(`ws://${ws_host}:${ws_port}`, {
     path: "/ws",
     transports: ["websocket", "polling"],
     extraHeaders: {
       authorization: token,
     },
   });
+
+  return wsSocket;
 }
 async function getRabbitChan() {
+  if (rabbitChan !== null) return rabbitChan;
+
   const conn = await amqp.connect({
     hostname: mqtt_host,
     port: mqtt_port,
     username: mqtt_user,
     password: token,
   });
-  return await conn.createConfirmChannel();
+  rabbitChan = await conn.createConfirmChannel();
+
+  return rabbitChan;
 }
 
 async function wsInitHandler(device = "", c = "") {
@@ -123,8 +132,6 @@ async function mqttInitHandler(device = "", c = "") {
       throw new Error("can not send");
     }
     await channel.waitForConfirms();
-    await channel.close();
-    await channel.connection.close();
     console.log(`initial message for sensor '${s.uid}' send to queue`);
   } catch (err) {
     console.log("Error:", err.message);
@@ -152,8 +159,6 @@ async function mqttDataHandler(uid, c = "") {
       }
     }
     await channel.waitForConfirms();
-    await channel.close();
-    await channel.connection.close();
     console.log(`${payloads.length} messages send to queue`);
   } catch (err) {
     console.log("Error:", err.message);

@@ -29,22 +29,23 @@ class DataModel {
     const point = new Point(info.class);
 
     point.tag("sensor_id", info.sensor);
-    const field = Object.keys(payload).filter((k) => k != "at")[0];
-    switch (typeof payload[field]) {
-      case "number":
-        if (Number.isInteger(payload[field])) {
-          point.intField(field, payload[field]);
-        } else {
-          point.floatField(field, payload[field]);
-        }
-        break;
-      case "string":
-        point.stringField(field, payload[field]);
-        break;
-      case "boolean":
-        point.booleanField(field, payload[field]);
-        break;
+    if (info.kind) {
+      point.tag("kind", info.kind);
     }
+    const fields = Object.keys(payload).filter((k) => k != "at");
+    fields.forEach((field) => {
+      switch (typeof payload[field]) {
+        case "number":
+          point.floatField(field, payload[field]);
+          break;
+        case "string":
+          point.stringField(field, payload[field]);
+          break;
+        case "boolean":
+          point.booleanField(field, payload[field]);
+          break;
+      }
+    });
 
     point.timestamp(payload.at ? new Date(payload.at) : new Date());
 
