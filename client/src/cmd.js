@@ -6,9 +6,9 @@ import { generateInit, generatePayload } from "./utils.js";
 const token = getEnv("token");
 const ws_port = getEnv("ws-port");
 const ws_host = getEnv("ws-host") ?? "localhost";
-const rabbit_port = getEnv("rabbit-port");
-const rabbit_host = getEnv("rabbit-host") ?? "localhost";
-const rabbit_user = getEnv("rabbit-user");
+const mqtt_port = getEnv("rabbit-port");
+const mqtt_host = getEnv("rabbit-host") ?? "localhost";
+const mqtt_user = getEnv("rabbit-user");
 
 export async function handleCmd(cmd = "") {
   const sCmd = cmd.split(" ");
@@ -32,13 +32,13 @@ export async function handleCmd(cmd = "") {
           break;
       }
       break;
-    case "rabbit":
+    case "mqtt":
       switch (sCmd[1]?.toLowerCase()) {
         case "initial":
-          await rabbitInitHandler(...sCmd.slice(2));
+          await mqttInitHandler(...sCmd.slice(2));
           break;
         case "data":
-          await rabbitDataHandler(...sCmd.slice(2));
+          await mqttDataHandler(...sCmd.slice(2));
           break;
         default:
           console.log(
@@ -49,7 +49,7 @@ export async function handleCmd(cmd = "") {
       break;
 
     default:
-      console.log("Invalid command, your protocol must be 'ws' or 'rabbit'");
+      console.log("Invalid command, your protocol must be 'ws' or 'mqtt'");
       break;
   }
 }
@@ -65,9 +65,9 @@ function getWsSocket() {
 }
 async function getRabbitChan() {
   const conn = await amqp.connect({
-    hostname: rabbit_host,
-    port: rabbit_port,
-    username: rabbit_user,
+    hostname: mqtt_host,
+    port: mqtt_port,
+    username: mqtt_user,
     password: token,
   });
   return await conn.createConfirmChannel();
@@ -108,7 +108,7 @@ async function wsDataHandler(uid, c = "") {
     console.log("Error:", err.message);
   }
 }
-async function rabbitInitHandler(device = "", c = "") {
+async function mqttInitHandler(device = "", c = "") {
   try {
     const s = generateInit({ device, class: c });
 
@@ -128,7 +128,7 @@ async function rabbitInitHandler(device = "", c = "") {
     console.log("Error:", err.message);
   }
 }
-async function rabbitDataHandler(uid, c = "") {
+async function mqttDataHandler(uid, c = "") {
   try {
     const channel = await getRabbitChan();
     const payloads = generatePayload(c);
@@ -163,7 +163,7 @@ function getHelp() {
     ------------------------------------------------------------------------------
     | Protocols:                                                                 |
     |              'ws' => communicate to ws-worker with ws protocol             |
-    |              'rabbit' => communicate to rabbitmq server with amqp protocol |
+    |              'mqtt' => communicate to rabbitmq server with amqp protocol |
     ------------------------------------------------------------------------------
 
     ------------------------------------------------------------------------------
