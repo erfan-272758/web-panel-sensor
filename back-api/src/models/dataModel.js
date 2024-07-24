@@ -85,7 +85,7 @@ class DataModel {
           useRegex = true;
           v = v.split("$regex_")[1];
         }
-        return `r.${k} ${useRegex ? `!~ /${v}/` : `== "${v}"`}`;
+        return `r.${k} ${useRegex ? `=~ /${v}/` : `== "${v}"`}`;
       })
       .join(" and ");
 

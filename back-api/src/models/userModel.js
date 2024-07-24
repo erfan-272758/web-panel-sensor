@@ -47,16 +47,22 @@ class UserModel {
 
     // convert extraKeys
     const parsedQuery = Object.entries(query)
-      .map(([k, v]) => `r.${k} == "${v}"`)
+      .map(([k, v]) => {
+        let useRegex = false;
+        if (v.startsWith("$regex_")) {
+          useRegex = true;
+          v = v.split("$regex_")[1];
+        }
+        return `r.${k} ${useRegex ? `=~ /${v}/` : `== "${v}"`}`;
+      })
       .join(" and ");
-
     const finalQuery = `
       from(bucket: "default")
-        |> range(start: 1970-01-01)
-        |> filter(fn: (r) => r._measurement == "users" ${
-          parsedQuery ? `and ${parsedQuery}` : ""
-        })
-    `;
+      |> range(start: 1970-01-01)
+      |> filter(fn: (r) => r._measurement == "users" ${
+        parsedQuery ? `and ${parsedQuery}` : ""
+      })
+      `;
 
     return new Promise((resolve, reject) => {
       const result = [];

@@ -1,5 +1,6 @@
 import { DataProvider } from "react-admin";
 import fakeServerFactory from "../fakeServer";
+import userProvider from "./user";
 
 export default (type: string) => {
   // The fake servers require to generate data, which can take some time.
@@ -15,6 +16,10 @@ export default (type: string) => {
   const dataProviderWithGeneratedData = new Proxy(defaultDataProvider, {
     get(_, name) {
       return (resource: string, params: any) => {
+        switch (resource) {
+          case "users":
+            return (userProvider as any)[name](resource, params);
+        }
         if (resource === "users") {
           const dp = {
             async getList() {

@@ -9,7 +9,8 @@ export class UserController {
     if (user.role !== "admin") {
       return res.json(transformDecorator({ data: [user] }));
     }
-    const users = await userModel.readUser({});
+    const q = req.query.q;
+    const users = await userModel.readUser(q ? { name: `$regex_${q}` } : {});
     return res.json(transformDecorator({ data: users }));
   }
   async getOne(req, res, next) {
@@ -43,7 +44,8 @@ export class UserController {
       name,
       role: "user",
     });
-    return res.status(201).json({ message: "user successfully created" });
+    const [u] = await userModel.readUser({ username }, false);
+    return res.status(201).json({ data: transformDecorator(u) });
   }
   async updateOne(req, res, next) {
     const { id } = req.params;
@@ -72,7 +74,9 @@ export class UserController {
     // create
     await userModel.writeUser(newUser);
 
-    return res.json({ message: "update successfully" });
+    const [u] = await userModel.readUser({ username: newUser.username }, false);
+
+    return res.json({ data: transformDecorator(u) });
   }
   async deleteOne(req, res, next) {
     if (req.user.role !== "admin")
