@@ -27,7 +27,7 @@ class SensorModel {
     return db.getQueryApi("organ");
   }
   async writeSensor(sensor) {
-    const point = new Point("sensor");
+    const point = new Point("sensors");
 
     for (const key in sensor) {
       const value = sensor[key];

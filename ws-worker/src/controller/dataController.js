@@ -1,11 +1,19 @@
 import dataModel from "../model/dataModel.js";
-import { validateClass } from "../utils/validation.js";
+import sensorModel from "../model/sensorModel.js";
+import { validateClass, validateSensor } from "../utils/validation.js";
 
 export default function dataController(socket) {
   return async (d, cb) => {
     try {
       const { class: c, uid, payload: p } = d;
       if (!validateClass(c)) throw new Error("Invalid class");
+
+      const v = await validateSensor({
+        sensor_id: uid,
+        c,
+        sensorModel,
+      });
+      if (!v.ok) throw new Error(v.message);
 
       const info = { class: c, sensor: uid };
       const payload = {};

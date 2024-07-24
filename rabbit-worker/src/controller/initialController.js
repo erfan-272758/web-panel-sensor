@@ -1,11 +1,14 @@
 import deviceModel from "../model/deviceModel.js";
 import sensorModel from "../model/sensorModel.js";
 import { transformMsg } from "../utils/transform.js";
+import { validateClass } from "../utils/validation.js";
 
 export default function initialController(channel) {
   return async (message) => {
     try {
       const data = transformMsg(message);
+      if (!validateClass(data.class)) throw new Error("Invalid class");
+
       const uid = data.uid;
       const s = (await sensorModel.readSensor({ uid }))?.[0];
       if (s) {

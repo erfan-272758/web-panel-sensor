@@ -1,7 +1,7 @@
 import { io } from "socket.io-client";
 import amqp from "amqplib";
 import { getEnv } from "./config.js";
-import { generateInit, generatePayload } from "./utils.js";
+import { generateInit, generatePayload, validateClass } from "./utils.js";
 
 const token = getEnv("token");
 const ws_port = getEnv("ws-port");
@@ -83,6 +83,11 @@ async function getRabbitChan() {
 }
 
 async function wsInitHandler(device = "", c = "") {
+  if (!validateClass(c)) {
+    return console.error(
+      "Invalid class received, it must be in 'Env','Acc','Info'"
+    );
+  }
   const s = generateInit({ device, class: c });
 
   const socket = getWsSocket();
@@ -99,6 +104,12 @@ async function wsInitHandler(device = "", c = "") {
   }
 }
 async function wsDataHandler(uid, c = "") {
+  if (!validateClass(c)) {
+    return console.error(
+      "Invalid class received, it must be in 'Env','Acc','Info'"
+    );
+  }
+
   const socket = getWsSocket();
   const payloads = generatePayload(c);
   if (payloads == null) return;
@@ -120,6 +131,12 @@ async function wsDataHandler(uid, c = "") {
   }
 }
 async function mqttInitHandler(device = "", c = "") {
+  if (!validateClass(c)) {
+    return console.error(
+      "Invalid class received, it must be in 'Env','Acc','Info'"
+    );
+  }
+
   try {
     const s = generateInit({ device, class: c });
 
@@ -138,6 +155,12 @@ async function mqttInitHandler(device = "", c = "") {
   }
 }
 async function mqttDataHandler(uid, c = "") {
+  if (!validateClass(c)) {
+    return console.error(
+      "Invalid class received, it must be in 'Env','Acc','Info'"
+    );
+  }
+
   try {
     const channel = await getRabbitChan();
     const payloads = generatePayload(c);
