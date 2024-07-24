@@ -1,25 +1,28 @@
-import deviceModel from "../src/model/deviceModel.js";
-import sensorModel from "../src/model/sensorModel.js";
+import deviceModel from "../model/deviceModel.js";
+import sensorModel from "../model/sensorModel.js";
+import { transformMsg } from "../utils/transform.js";
 
-export default function initialController(socket) {
-  return async (data, cb) => {
+export default function initialController(channel) {
+  return async (message) => {
     try {
+      const data = transformMsg(message);
       const uid = data.uid;
       const s = (await sensorModel.readSensor({ uid }))?.[0];
       if (s) {
-        return cb({ status: "success" });
+        return channel.ack(message, false);
       }
 
       //   check device
       const d = (await deviceModel.readDevice({ id: data.device }))?.[0];
       if (!d) {
-        return cb({ status: "failed" });
+        return channel.nack(message, false, false);
       }
 
       await sensorModel.writeSensor(data);
-      return cb({ status: "success" });
+      return channel.ack(message, false);
     } catch (err) {
-      cb({ status: "failed", message: err.message });
+      console.error(err);
+      channel.nack(message, false, false);
     }
   };
 }

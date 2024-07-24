@@ -1,7 +1,7 @@
 import { Server } from "socket.io";
 import { getEnv } from "./config.js";
-import initialController from "../controller/initialController.js";
-import dataController from "../controller/dataController.js";
+import initialController from "./controller/initialController.js";
+import dataController from "./controller/dataController.js";
 
 const port = +(getEnv("port") || "3000");
 const token = getEnv("token");

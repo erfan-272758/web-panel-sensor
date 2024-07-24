@@ -1,4 +1,4 @@
-import dataModel from "../src/model/dataModel.js";
+import dataModel from "../model/dataModel.js";
 
 export default function dataController(socket) {
   return async (data, cb) => {

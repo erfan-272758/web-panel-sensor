@@ -1,5 +1,5 @@
-import deviceModel from "../src/model/deviceModel.js";
-import sensorModel from "../src/model/sensorModel.js";
+import deviceModel from "../model/deviceModel.js";
+import sensorModel from "../model/sensorModel.js";
 
 export default function initialController(socket) {
   return async (data, cb) => {

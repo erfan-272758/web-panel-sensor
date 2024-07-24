@@ -1,14 +1,14 @@
-import dataModel from "../src/model/dataModel.js";
+import dataModel from "../model/dataModel.js";
+import { transformMsg } from "../utils/transform.js";
 
-export default function dataController(socket) {
-  return async (data, cb) => {
+export default function dataController(channel) {
+  return async (message) => {
     try {
-      const { class: c, uid, payload } = data;
+      const { class: c, uid, payload } = transformMsg(message);
       await dataModel.writeData({ class: c, sensor: uid }, payload);
-
-      cb({ status: "success" });
+      channel.ack(message);
     } catch (err) {
-      cb({ status: "failed" });
+      channel.nack(message, false, false);
     }
   };
 }

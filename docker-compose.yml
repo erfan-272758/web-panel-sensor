@@ -1,4 +1,4 @@
-version: "3"
+name: "web-panel"
 services:
   influx:
     container_name: influx

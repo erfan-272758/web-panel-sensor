@@ -1,7 +1,7 @@
 import amqp from "amqplib";
 import { getEnv } from "./config.js";
-import initialController from "../controller/initialController.js";
-import dataController from "../controller/dataController.js";
+import initialController from "./controller/initialController.js";
+import dataController from "./controller/dataController.js";
 
 async function startConsumer() {
   const host = getEnv("host");
