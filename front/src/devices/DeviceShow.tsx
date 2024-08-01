@@ -17,7 +17,7 @@ import { useState } from "react";
 
 export default function DeviceShow(props: any) {
   const record = useRecordContext();
-  const [sensor, setSensor] = useState();
+  const [sensor, setSensor] = useState<any>(null);
 
   return (
     <Show {...props}>
@@ -35,18 +35,15 @@ export default function DeviceShow(props: any) {
               header={(props) => {
                 return <DatagridHeader {...props} />;
               }}
+              rowClick={(id, res, record) => {
+                setSensor(record);
+                return false;
+              }}
             >
               <TextField source="id" />
               <TextField source="name" />
               <TextField source="class" />
               <DateField source="createdAt" />
-              <ShowButton
-                label="Show"
-                onClick={(e) => {
-                  e.preventDefault();
-                  console.log("call", e.target);
-                }}
-              />
             </Datagrid>
           </ArrayField>
           <SensorInfoField sensor={sensor} />

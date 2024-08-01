@@ -11,47 +11,54 @@ import {
 
 export function SensorInfoField({ sensor }: any) {
   return sensor ? (
-    <Card variant="outlined">
-      <Stack title="Installation" style={{ paddingLeft: "10px" }}>
-        <Labeled style={{ margin: "5px" }}>
-          <TextField label="latitude" source="inst_lat" record={sensor} />
-        </Labeled>
-        <Labeled style={{ margin: "5px" }}>
-          <TextField source="inst_lon" label="longitude" record={sensor} />
-        </Labeled>
-        <Labeled style={{ margin: "5px" }}>
-          <TextField
-            source="inst_operator_id"
-            label="Operator ID"
-            record={sensor}
-          />
-        </Labeled>
-        <Labeled style={{ margin: "5px" }}>
-          <DateField
-            source="inst_time"
-            label="Installation Time"
-            record={sensor}
-          />
-        </Labeled>
-        <Labeled style={{ margin: "5px" }}>
-          <TextField
-            source="inst_cellular_no"
-            label="Cellular Number"
-            record={sensor}
-          />
-        </Labeled>
-        <Labeled style={{ margin: "5px" }}>
-          <TextField
-            source="inst_cellular_operator"
-            label="Cellular Operator"
-            record={sensor}
-          />
-        </Labeled>
-        <Labeled style={{ margin: "5px" }}>
-          <TextField source="inst_cert" label="Cert" record={sensor} />
-        </Labeled>
-      </Stack>
-    </Card>
+    <>
+      <FunctionField
+        source="name"
+        label="Name"
+        render={() => `Sensor ${sensor.name}`}
+      />
+      <Card variant="outlined">
+        <Stack title="Installation" style={{ paddingLeft: "10px" }}>
+          <Labeled style={{ margin: "5px" }}>
+            <TextField label="latitude" source="inst_lat" record={sensor} />
+          </Labeled>
+          <Labeled style={{ margin: "5px" }}>
+            <TextField source="inst_lon" label="longitude" record={sensor} />
+          </Labeled>
+          <Labeled style={{ margin: "5px" }}>
+            <TextField
+              source="inst_operator_id"
+              label="Operator ID"
+              record={sensor}
+            />
+          </Labeled>
+          <Labeled style={{ margin: "5px" }}>
+            <DateField
+              source="inst_time"
+              label="Installation Time"
+              record={sensor}
+            />
+          </Labeled>
+          <Labeled style={{ margin: "5px" }}>
+            <TextField
+              source="inst_cellular_no"
+              label="Cellular Number"
+              record={sensor}
+            />
+          </Labeled>
+          <Labeled style={{ margin: "5px" }}>
+            <TextField
+              source="inst_cellular_operator"
+              label="Cellular Operator"
+              record={sensor}
+            />
+          </Labeled>
+          <Labeled style={{ margin: "5px" }}>
+            <TextField source="inst_cert" label="Cert" record={sensor} />
+          </Labeled>
+        </Stack>
+      </Card>
+    </>
   ) : null;
 }
 export function SensorInfoInput() {
