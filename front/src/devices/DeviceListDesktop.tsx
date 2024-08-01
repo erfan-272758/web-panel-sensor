@@ -24,7 +24,7 @@ const DevicesBulkActionButtons = () => (
   <>
     <BulkAcceptButton />
     <BulkRejectButton />
-    <BulkDeleteButton />
+    <BulkDeleteButton mutationMode="pessimistic" />
   </>
 );
 
@@ -53,7 +53,7 @@ const DeviceListDesktop = ({ selectedRow }: DeviceListDesktopProps) => (
     <DateField source="createdAt" />
     <CopyBtn getContent={(r) => r.id} />
     <EditButton />
-    <DeleteButton />
+    <DeleteButton mutationMode="pessimistic" />
   </DatagridConfigurable>
 );
 

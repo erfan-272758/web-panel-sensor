@@ -1,26 +1,15 @@
 import { Card, Stack } from "@mui/material";
 import {
   ArrayField,
-  Button,
   Datagrid,
   DatagridHeader,
   DateField,
-  EditButton,
-  FunctionField,
-  Labeled,
-  ListActions,
-  RichTextField,
   Show,
-  ShowActions,
   ShowButton,
-  SimpleList,
-  SimpleShowLayout,
-  SingleFieldList,
   Tab,
   TabbedShowLayout,
   TextField,
   useRecordContext,
-  WrapperField,
 } from "react-admin";
 import { SensorInfoField } from "./SensorInfo";
 import SensorChart from "./SensorChart";
@@ -50,7 +39,7 @@ export default function DeviceShow(props: any) {
               <TextField source="id" />
               <TextField source="name" />
               <TextField source="class" />
-              <TextField source="createdAt" />
+              <DateField source="createdAt" />
               <ShowButton
                 label="Show"
                 onClick={(e) => {

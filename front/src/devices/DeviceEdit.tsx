@@ -28,10 +28,9 @@ import { Link as RouterLink } from "react-router-dom";
 import { Card, CardContent, Box, Grid, Typography, Link } from "@mui/material";
 
 import { Device, Customer } from "../types";
-import { SensorInfoInput } from "./SensorInfo";
 
 const DeviceEdit = () => (
-  <Edit component="div">
+  <Edit component="div" mutationMode="pessimistic">
     <DeviceForm />
   </Edit>
 );
@@ -67,7 +66,10 @@ const DeviceForm = () => {
   const translate = useTranslate();
   return (
     // <SimpleForm defaultValues={{ status: "pending" }}>
-    <TabbedForm defaultValues={{ status: "pending" }}>
+    <TabbedForm
+      defaultValues={{ status: "pending" }}
+      mutationMode="pessimistic"
+    >
       <TabbedForm.Tab label={"General Information"}>
         {/* id */}
         <TextInput source="id" disabled />

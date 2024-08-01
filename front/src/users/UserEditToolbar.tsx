@@ -50,7 +50,11 @@ const UserEditToolbar = (props: ToolbarProps) => {
             }}
             type="button"
           />
-          <DeleteButton record={record} resource={resource} />
+          <DeleteButton
+            record={record}
+            resource={resource}
+            mutationMode="pessimistic"
+          />
         </Fragment>
       )}
     </Toolbar>

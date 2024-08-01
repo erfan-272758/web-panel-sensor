@@ -23,7 +23,7 @@ const UsersBulkActionButtons = () => (
   <>
     <BulkAcceptButton />
     <BulkRejectButton />
-    <BulkDeleteButton />
+    <BulkDeleteButton mutationMode="pessimistic" />
   </>
 );
 
