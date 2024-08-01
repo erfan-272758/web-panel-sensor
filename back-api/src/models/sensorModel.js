@@ -1,3 +1,4 @@
+import { randomUUID } from "crypto";
 import { Point } from "@influxdata/influxdb-client";
 import { DeleteAPI } from "@influxdata/influxdb-client-apis";
 import { db } from "../config.js";
@@ -31,10 +32,16 @@ class SensorModel {
 
     for (const key in sensor) {
       const value = sensor[key];
+      if (value == null || value == undefined) continue;
       point.tag(key, typeof value === "object" ? JSON.stringify(value) : value);
     }
     point.booleanField("active", true);
     point.timestamp(new Date());
+
+    // id
+    if (!sensor?.id) {
+      point.tag("id", randomUUID());
+    }
 
     //    write
     const writeClient = this.getWriteClient();

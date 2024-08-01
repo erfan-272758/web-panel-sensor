@@ -82,14 +82,23 @@ class DeviceController {
     const [device] = await deviceModel.readDevice(query);
 
     if (!device) return next(new HttpError(404, "device not found"));
+    const { name, owner, sensors: ss } = req.body;
 
-    // delete
+    // sensors
+    const sensors = ss ? await sensorModel.readSensor({ device: id }) : [];
+
+    // delete device
     const canDelete = await deviceModel.deleteDevice(query);
     if (!canDelete)
       return next(new HttpError(500, "Can not update please try again later"));
 
+    for (const sensor of sensors) {
+      // delete sensor
+      const canDelete = await sensorModel.deleteSensor({ id: sensor.id });
+      if (!canDelete) return next(new HttpError(500, "can not delete sensor"));
+    }
+
     // merge
-    const { name, owner } = req.body;
     const newDevice = {
       id: device.id,
       name: name || device.name,
@@ -99,7 +108,19 @@ class DeviceController {
     // create
     await deviceModel.writeDevice(newDevice);
 
+    // create new sensors
+    if (ss) {
+      for (const s of ss) {
+        s.device = newDevice.id;
+        await sensorModel.writeSensor(s);
+      }
+    }
+
     const [d] = await deviceModel.readDevice({ id: newDevice.id });
+    // sensors
+    const sss = await sensorModel.readSensor({ device: newDevice.id });
+
+    if (d) d.sensors = sss;
 
     return res.json({ data: transformDecorator(d) });
   }

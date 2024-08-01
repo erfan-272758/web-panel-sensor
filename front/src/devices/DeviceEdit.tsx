@@ -87,7 +87,7 @@ const DeviceForm = () => {
         </ReferenceInput>
       </TabbedForm.Tab>
       <TabbedForm.Tab label={"sensors"}>
-        {/* Streams */}
+        {/* Sensors */}
         <ArrayInput source="sensors" label={false}>
           <SimpleFormIterator>
             <TextInput source="name" />
@@ -120,7 +120,6 @@ const DeviceForm = () => {
               label="Cellular Operator"
             />
             <TextInput source="inst_cert" label="Cert" />
-            <NumberInput source="inst_lat" />
             <DateInput source={"createdAt"} label="Created At" disabled />
           </SimpleFormIterator>
         </ArrayInput>
