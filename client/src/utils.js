@@ -58,9 +58,9 @@ function infoData() {
 }
 
 export function generateInit(data = {}) {
-  const uid = randomUUID();
+  const id = randomUUID();
   return {
-    uid,
+    id,
     name: "sensor-test",
     tZone: "+03:30",
     tSource: "GPS",

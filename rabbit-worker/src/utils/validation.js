@@ -4,10 +4,10 @@ export function validateClass(c) {
 }
 
 export async function validateSensor({ sensor_id, c, sensorModel }) {
-  const [s] = (await sensorModel.readSensor({ uid: sensor_id })) ?? [];
+  const [s] = (await sensorModel.readSensor({ id: sensor_id })) ?? [];
 
   if (!s) {
-    return { ok: false, message: "sensor uid is wrong" };
+    return { ok: false, message: "sensor id is wrong" };
   }
 
   if (s.class !== c) {

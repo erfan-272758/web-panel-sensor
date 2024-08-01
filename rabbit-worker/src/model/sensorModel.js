@@ -4,7 +4,7 @@ import { db } from "../config.js";
 import bfs from "../utils/bfs.js";
 
 export const sensorSample = {
-  uid: "",
+  id: "",
   name: "",
   device: "",
   security_code: "",

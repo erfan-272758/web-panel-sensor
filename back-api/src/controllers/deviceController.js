@@ -124,9 +124,9 @@ class DeviceController {
     await Promise.all(
       sensors.map(async (s) => {
         // delete sensors
-        await sensorModel.deleteSensor({ uid: s.uid });
+        await sensorModel.deleteSensor({ id: s.id });
         // delete data
-        await dataModel.deleteData({ class: s.class, sensor_id: s.uid });
+        await dataModel.deleteData({ class: s.class, sensor_id: s.id });
       })
     );
 
@@ -144,7 +144,7 @@ class DeviceController {
 
     const sq = {
       device: deviceId,
-      uid: sensorId,
+      id: sensorId,
     };
 
     // get device
@@ -164,7 +164,7 @@ class DeviceController {
     if (!canDelete) return next(new HttpError(500, "can not delete sensor"));
 
     // delete data
-    await dataModel.deleteData({ class: sensor.class, sensor_id: sensor.uid });
+    await dataModel.deleteData({ class: sensor.class, sensor_id: sensor.id });
 
     return res.status(204).send();
   }

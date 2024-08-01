@@ -6,6 +6,7 @@ import {
   DatagridHeader,
   DateField,
   EditButton,
+  FunctionField,
   Labeled,
   ListActions,
   RichTextField,
@@ -18,53 +19,23 @@ import {
   Tab,
   TabbedShowLayout,
   TextField,
+  useRecordContext,
   WrapperField,
 } from "react-admin";
+import { SensorInfoField } from "./SensorInfo";
+import SensorChart from "./SensorChart";
+import { useState } from "react";
 
 export default function DeviceShow(props: any) {
+  const record = useRecordContext();
+  const [sensor, setSensor] = useState();
+
   return (
     <Show {...props}>
       <TabbedShowLayout>
         <Tab label="General Information">
+          <TextField source="id" />
           <TextField source="name" />
-          <TextField source="t_zone" label="Time Zone" />
-          <Card variant="outlined">
-            <Stack title="Installation" style={{ paddingLeft: "10px" }}>
-              <Labeled style={{ margin: "5px" }}>
-                <TextField source="installation.lat" label="latitude" />
-              </Labeled>
-              <Labeled style={{ margin: "5px" }}>
-                <TextField source="installation.lon" label="longitude" />
-              </Labeled>
-              <Labeled style={{ margin: "5px" }}>
-                <TextField
-                  source="installation.operator_id"
-                  label="Operator ID"
-                />
-              </Labeled>
-              <Labeled style={{ margin: "5px" }}>
-                <DateField
-                  source="installation.installation_time"
-                  label="Installation Time"
-                />
-              </Labeled>
-              <Labeled style={{ margin: "5px" }}>
-                <TextField
-                  source="installation.cellular_no"
-                  label="Cellular Number"
-                />
-              </Labeled>
-              <Labeled style={{ margin: "5px" }}>
-                <TextField
-                  source="installation.cellular_operator"
-                  label="Cellular Operator"
-                />
-              </Labeled>
-              <Labeled style={{ margin: "5px" }}>
-                <TextField source="installation.cert" label="Cert" />
-              </Labeled>
-            </Stack>
-          </Card>
           <TextField source="owner" />
           <DateField label="Creation date" source="createdAt" />
         </Tab>
@@ -73,26 +44,13 @@ export default function DeviceShow(props: any) {
             <Datagrid
               bulkActionButtons={false}
               header={(props) => {
-                const newChildren = [] as any;
-                if (props.children) {
-                  const children = props.children as any;
-                  for (const child of children) {
-                    if (child?.props?.label === "Show") {
-                      newChildren.push({
-                        ...child,
-                        props: { ...child, label: "Chart" },
-                      });
-                    } else newChildren.push(child);
-                  }
-                }
-
-                return <DatagridHeader {...props} children={newChildren} />;
+                return <DatagridHeader {...props} />;
               }}
             >
+              <TextField source="id" />
               <TextField source="name" />
-              <TextField source="protocol" />
-              <TextField source="port" />
-              <TextField source="data_type" />
+              <TextField source="class" />
+              <TextField source="createdAt" />
               <ShowButton
                 label="Show"
                 onClick={(e) => {
@@ -102,6 +60,8 @@ export default function DeviceShow(props: any) {
               />
             </Datagrid>
           </ArrayField>
+          <SensorInfoField sensor={sensor} />
+          <SensorChart sensor={sensor} />
         </Tab>
       </TabbedShowLayout>
     </Show>

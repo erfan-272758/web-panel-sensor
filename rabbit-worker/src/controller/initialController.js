@@ -9,8 +9,8 @@ export default function initialController(channel) {
       const data = transformMsg(message);
       if (!validateClass(data.class)) throw new Error("Invalid class");
 
-      const uid = data.uid;
-      const s = (await sensorModel.readSensor({ uid }))?.[0];
+      const id = data.id;
+      const s = (await sensorModel.readSensor({ id }))?.[0];
       if (s) {
         return channel.ack(message, false);
       }

@@ -97,13 +97,13 @@ async function wsInitHandler(device = "", c = "") {
       throw new Error(response.message ?? "somethings went wrong");
     }
     console.log(
-      `initial socket successfully by uid '${s.uid}' for device '${device}' with class '${c}'`
+      `initial socket successfully by id '${s.id}' for device '${device}' with class '${c}'`
     );
   } catch (err) {
     console.log("Error:", err.message);
   }
 }
-async function wsDataHandler(uid, c = "") {
+async function wsDataHandler(id, c = "") {
   if (!validateClass(c)) {
     return console.error(
       "Invalid class received, it must be in 'Env','Acc','Info'"
@@ -117,7 +117,7 @@ async function wsDataHandler(uid, c = "") {
   try {
     for (const payload of payloads) {
       const response = await socket.timeout(5000).emitWithAck("data", {
-        uid,
+        id,
         class: c,
         payload,
       });
@@ -149,12 +149,12 @@ async function mqttInitHandler(device = "", c = "") {
       throw new Error("can not send");
     }
     await channel.waitForConfirms();
-    console.log(`initial message for sensor '${s.uid}' send to queue`);
+    console.log(`initial message for sensor '${s.id}' send to queue`);
   } catch (err) {
     console.log("Error:", err.message);
   }
 }
-async function mqttDataHandler(uid, c = "") {
+async function mqttDataHandler(id, c = "") {
   if (!validateClass(c)) {
     return console.error(
       "Invalid class received, it must be in 'Env','Acc','Info'"
@@ -171,7 +171,7 @@ async function mqttDataHandler(uid, c = "") {
         "data",
         Buffer.from(
           JSON.stringify({
-            uid,
+            id,
             class: c,
             payload,
           })
@@ -208,7 +208,7 @@ function getHelp() {
     | Data:                                                                      |
     |              <device-id> <class-name> => use this pattern when you have    |
     |                                          'initial' action                  |
-    |              <sensor-uid> <class-name> => use this pattern when you have   |
+    |              <sensor-id> <class-name> => use this pattern when you have   |
     |                                          'data' action                     |
     ------------------------------------------------------------------------------
 

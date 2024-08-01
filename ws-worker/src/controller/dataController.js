@@ -5,17 +5,17 @@ import { validateClass, validateSensor } from "../utils/validation.js";
 export default function dataController(socket) {
   return async (d, cb) => {
     try {
-      const { class: c, uid, payload: p } = d;
+      const { class: c, id, payload: p } = d;
       if (!validateClass(c)) throw new Error("Invalid class");
 
       const v = await validateSensor({
-        sensor_id: uid,
+        sensor_id: id,
         c,
         sensorModel,
       });
       if (!v.ok) throw new Error(v.message);
 
-      const info = { class: c, sensor: uid };
+      const info = { class: c, sensor: id };
       const payload = {};
 
       switch (c) {
