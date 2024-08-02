@@ -77,8 +77,24 @@ class DataModel {
   readData(query) {
     const queryApi = this.getQueryClient();
 
+    //  start , end
+    let start = new Date("1970-01-01"),
+      end = new Date();
+    const c = query.class;
+    delete query.class;
+
+    if (query.start) {
+      start = new Date(query.start);
+      delete query.start;
+    }
+    if (query.end) {
+      end = new Date(query.end);
+      delete query.end;
+    }
+
     // convert extraKeys
     const parsedQuery = Object.entries(query)
+      .filter(([, v]) => v !== undefined)
       .map(([k, v]) => {
         let useRegex = false;
         if (v.startsWith("$regex_")) {
@@ -91,8 +107,8 @@ class DataModel {
 
     const finalQuery = `
       from(bucket: "default")
-        |> range(start: 1970-01-01)
-        |> filter(fn: (r) => r._measurement == "${query.class}" ${
+        |> range(start: ${start.toISOString()}, stop: ${end.toISOString()})
+        |> filter(fn: (r) => r._measurement == "${c}" ${
       parsedQuery ? `and ${parsedQuery}` : ""
     })
     `;

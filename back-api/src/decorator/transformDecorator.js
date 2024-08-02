@@ -15,3 +15,18 @@ export default function transformDecorator(body) {
   bfs(body, filter);
   return body;
 }
+
+export function transformWithKeys(body, keysMap = {}, removeKeys = []) {
+  const filter = ({ parent, key, value }) => {
+    if (!parent) return;
+    const k2 = keysMap[key];
+    if (k2) {
+      parent[k2] = value;
+      delete parent[key];
+    }
+    if (removeKeys.includes(key)) delete parent[key];
+  };
+  if (typeof body !== "object") return body;
+  bfs(body, filter);
+  return transformDecorator(body);
+}
