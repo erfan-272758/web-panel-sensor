@@ -1,6 +1,7 @@
 import transformDecorator, {
   transformWithKeys,
 } from "../decorator/transformDecorator.js";
+import { HttpError } from "../errors/HttpError.js";
 import dataModel from "../models/dataModel.js";
 
 class DataController {
@@ -8,12 +9,18 @@ class DataController {
     const { sensorId, sensorClass } = req.params;
     const { start, end, field } = req.query;
 
+    const s = new Date(start ? start : "1970"),
+      e = new Date(end ? end : Date.now());
+    if (e.getTime() < s.getTime())
+      return next(new HttpError(400, "start must be before end"));
+    if (s.getTime() > Date.now())
+      return next(new HttpError(400, "start must be before now"));
     // fetch data
     const data = await dataModel.readData({
       class: sensorClass,
       sensor_id: sensorId,
-      start,
-      end,
+      start: s.toISOString(),
+      end: e,
       _field: field,
     });
 
