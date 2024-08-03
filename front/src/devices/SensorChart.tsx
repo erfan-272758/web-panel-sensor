@@ -11,7 +11,15 @@ import {
 import sensorApi, { ChartData } from "../dataProvider/sensor";
 import CustomDateTimeRangePicker from "../UI/CustomDateTimeRangePicker";
 import LoadingOverlay from "../UI/LoadingOverlay";
-import { useNotify } from "react-admin";
+import { Datagrid, DatagridBody, useNotify } from "react-admin";
+import { styled } from "@mui/material/styles";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell, { tableCellClasses } from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import Paper from "@mui/material/Paper";
 
 type ChartDataMap = { [k: string]: ChartData[] | undefined };
 
@@ -93,6 +101,34 @@ export default function SensorChart({ sensor }: { sensor: any }) {
         }
 
         break;
+      case "Info":
+        const textResp = await sensorApi.fetchData(
+          sensor,
+          "text",
+          startDate,
+          endDate
+        );
+        const numResp = await sensorApi.fetchData(
+          sensor,
+          "num",
+          startDate,
+          endDate
+        );
+
+        if (textResp.error) {
+          console.error(textResp.error);
+          notif("Error on fetch data for chart text", { type: "error" });
+        } else {
+          response.text = textResp.data;
+        }
+        if (numResp.error) {
+          console.error(numResp.error);
+          notif("Error on fetch data for chart number", { type: "error" });
+        } else {
+          response.num = numResp.data;
+        }
+
+        break;
 
       default:
         break;
@@ -128,6 +164,7 @@ export default function SensorChart({ sensor }: { sensor: any }) {
       >
         <EnvChart temp={chartDataMap.temp} hum={chartDataMap.hum} />
         <AccChart x={chartDataMap.x} y={chartDataMap.y} z={chartDataMap.z} />
+        <InfoTable num={chartDataMap.num} text={chartDataMap.text} />
       </div>
     </div>
   ) : null;
@@ -141,6 +178,10 @@ interface AccChartProps {
   x?: ChartData[];
   y?: ChartData[];
   z?: ChartData[];
+}
+interface InfoTableProps {
+  text?: ChartData[];
+  num?: ChartData[];
 }
 
 const EnvChart: React.FC<EnvChartProps> = ({ temp, hum }) => {
@@ -288,6 +329,94 @@ const AccChart: React.FC<AccChartProps> = ({ x, y, z }) => {
         dot={<></>}
       />
     </LineChart>
+  );
+};
+
+const StyledTableCell = styled(TableCell)(({ theme }) => ({
+  [`&.${tableCellClasses.head}`]: {
+    backgroundColor: theme.palette.common.black,
+    color: theme.palette.common.white,
+  },
+  [`&.${tableCellClasses.body}`]: {
+    fontSize: 14,
+  },
+}));
+
+const StyledTableRow = styled(TableRow)(({ theme }) => ({
+  "&:nth-of-type(odd)": {
+    backgroundColor: theme.palette.action.hover,
+  },
+  // hide last border
+  "&:last-child td, &:last-child th": {
+    border: 0,
+  },
+}));
+
+const InfoTable: React.FC<InfoTableProps> = ({ text, num }) => {
+  return (
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        width: "100%",
+      }}
+    >
+      {text?.length ? (
+        <TableContainer component={Paper}>
+          <Table sx={{ minWidth: 700 }} aria-label="customized table">
+            <TableHead>
+              <TableRow>
+                <StyledTableCell>Text</StyledTableCell>
+                <StyledTableCell align="right">Time</StyledTableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {text.map((row, i) => (
+                <StyledTableRow key={row.time + i}>
+                  <StyledTableCell component="th" scope="row">
+                    {row.value}
+                  </StyledTableCell>
+                  <StyledTableCell align="right">
+                    {new Date(row.time).toDateString()}
+                  </StyledTableCell>
+                </StyledTableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      ) : null}
+      {num?.length ? (
+        <TableContainer
+          component={Paper}
+          style={{
+            marginTop: text ? "20px" : "0",
+          }}
+        >
+          <Table sx={{ minWidth: 700 }} aria-label="customized table">
+            <TableHead>
+              <TableRow>
+                <StyledTableCell>Number</StyledTableCell>
+                <StyledTableCell align="right">Time</StyledTableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {num.map((row, i) => (
+                <StyledTableRow key={row.time + i}>
+                  <StyledTableCell component="th" scope="row">
+                    {row.value}
+                  </StyledTableCell>
+                  <StyledTableCell align="right">
+                    {new Date(row.time).toDateString()}
+                  </StyledTableCell>
+                </StyledTableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      ) : null}
+    </div>
   );
 };
 
