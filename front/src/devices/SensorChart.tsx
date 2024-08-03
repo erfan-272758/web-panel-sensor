@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Tooltip,
   CartesianGrid,
@@ -53,6 +53,46 @@ export default function SensorChart({ sensor }: { sensor: any }) {
         }
 
         break;
+      case "Acc":
+        const xResp = await sensorApi.fetchData(
+          sensor,
+          "x",
+          startDate,
+          endDate
+        );
+        const yResp = await sensorApi.fetchData(
+          sensor,
+          "y",
+          startDate,
+          endDate
+        );
+        const zResp = await sensorApi.fetchData(
+          sensor,
+          "z",
+          startDate,
+          endDate
+        );
+
+        if (xResp.error) {
+          console.error(xResp.error);
+          notif("Error on fetch data for chart x", { type: "error" });
+        } else {
+          response.x = xResp.data;
+        }
+        if (yResp.error) {
+          console.error(yResp.error);
+          notif("Error on fetch data for chart y", { type: "error" });
+        } else {
+          response.y = yResp.data;
+        }
+        if (zResp.error) {
+          console.error(zResp.error);
+          notif("Error on fetch data for chart z", { type: "error" });
+        } else {
+          response.z = zResp.data;
+        }
+
+        break;
 
       default:
         break;
@@ -66,23 +106,44 @@ export default function SensorChart({ sensor }: { sensor: any }) {
   }, [sensor?.id]);
 
   return sensor ? (
-    <>
+    <div
+      style={{
+        width: "100%",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
       <LoadingOverlay loading={loading} />
       <CustomDateTimeRangePicker
         onChange={handleDateChange}
         isChange={sensor?.id}
       />
-      <EnvChart temp={chartDataMap.temp} hum={chartDataMap.hum} />
-    </>
+      <div
+        style={{
+          marginTop: "20px",
+          marginBottom: "5px",
+        }}
+      >
+        <EnvChart temp={chartDataMap.temp} hum={chartDataMap.hum} />
+        <AccChart x={chartDataMap.x} y={chartDataMap.y} z={chartDataMap.z} />
+      </div>
+    </div>
   ) : null;
 }
 
-interface ChartProps {
+interface EnvChartProps {
   temp?: ChartData[];
   hum?: ChartData[];
 }
+interface AccChartProps {
+  x?: ChartData[];
+  y?: ChartData[];
+  z?: ChartData[];
+}
 
-const EnvChart: React.FC<ChartProps> = ({ temp, hum }) => {
+const EnvChart: React.FC<EnvChartProps> = ({ temp, hum }) => {
   if (!temp && !hum) return null;
   const tempFormat = temp ? generateTimeFormat(temp) : null;
   const humFormat = hum ? generateTimeFormat(hum) : null;
@@ -91,7 +152,7 @@ const EnvChart: React.FC<ChartProps> = ({ temp, hum }) => {
     <>
       {temp ? (
         <LineChart width={800} height={400} data={temp}>
-          <CartesianGrid stroke="#f5f5f5" strokeDasharray="3 3" />
+          <CartesianGrid stroke="#dddd" />
           <XAxis
             dataKey="time"
             tickFormatter={(v, i) => {
@@ -112,15 +173,15 @@ const EnvChart: React.FC<ChartProps> = ({ temp, hum }) => {
           <Line
             type="monotone"
             dataKey="value"
-            name="temperature"
-            stroke="#8884d8"
+            name="Temperature"
+            stroke="#90caf9"
             dot={<></>}
           />
         </LineChart>
       ) : null}
       {hum ? (
         <LineChart width={800} height={400} data={hum}>
-          <CartesianGrid stroke="#f5f5f5" strokeDasharray="3 3" />
+          <CartesianGrid stroke="#dddd" />
           <XAxis
             dataKey="time"
             tickFormatter={(v, i) => {
@@ -142,13 +203,91 @@ const EnvChart: React.FC<ChartProps> = ({ temp, hum }) => {
           <Line
             type="monotone"
             dataKey="value"
-            name="humidity"
+            name="Humidity"
             stroke="#8884d8"
             dot={<></>}
           />
         </LineChart>
       ) : null}
     </>
+  );
+};
+
+const AccChart: React.FC<AccChartProps> = ({ x, y, z }) => {
+  if (!x || !y || !z) return null;
+  const acc = x || y || z;
+  const accFormat = acc ? generateTimeFormat(acc) : null;
+  // Calculate acceleration based on the provided data
+  const accelerationData = useMemo(() => {
+    return (
+      x
+        // map to point
+        .map((_, i) => ({
+          x: x[i].value,
+          y: y[i].value,
+          z: z[i].value,
+          time: new Date(x[i].time),
+        }))
+        // map to speed
+        .map((point, index, data) => {
+          if (index === 0) {
+            return { time: point.time, speed: 0 }; // Assuming initial speed is 0
+          } else {
+            const prevPoint = data[index - 1];
+            const locChange = Math.sqrt(
+              (point.x - prevPoint.x) ** 2 +
+                (point.y - prevPoint.y) ** 2 +
+                (point.z - prevPoint.z) ** 2
+            );
+            const timeChange =
+              (point.time.getTime() - prevPoint.time.getTime()) / 1000;
+            return { time: point.time, speed: locChange / timeChange };
+          }
+        })
+        // map to acc
+        .map((s, index, d) => {
+          if (index === 0) {
+            return { time: s.time, acc: 0 }; // Assuming initial acc is 0
+          } else {
+            const prevS = d[index - 1];
+            const speedChange = s.speed - prevS.speed;
+            const timeChange = (s.time.getTime() - prevS.time.getTime()) / 1000;
+            return { time: s.time, acc: speedChange / timeChange };
+          }
+        })
+    );
+  }, [x, y, z]);
+
+  return (
+    <LineChart width={800} height={400} data={accelerationData}>
+      <CartesianGrid />
+      <XAxis
+        dataKey="time"
+        stroke="#dddd"
+        tickFormatter={(v, i) => {
+          const d = new Date(v);
+          if (i == 0) {
+            return new Intl.DateTimeFormat("en-US", {
+              day: "2-digit",
+              hour: "numeric",
+              minute: "numeric",
+            }).format(d);
+          }
+
+          return accFormat?.format(d) ?? "";
+        }}
+      />
+      <YAxis />
+      <Tooltip />
+      <Legend />
+      <Line
+        type="monotone"
+        dataKey="acc"
+        name="Acceleration"
+        stroke="#8884d8"
+        dot={<></>}
+      />
+    </LineChart>
   );
 };
 
