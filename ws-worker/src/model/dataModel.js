@@ -54,6 +54,36 @@ class DataModel {
     writeClient.writePoint(point);
     return await writeClient.close();
   }
+  async writeBatch(info, batch) {
+    const writeClient = this.getWriteClient();
+    for (const data of batch) {
+      const { time, ...payload } = data;
+      const point = new Point(info.class);
+      point.tag("sensor_id", info.sensor);
+      if (info.kind) {
+        point.tag("kind", info.kind);
+      }
+      const fields = Object.keys(payload);
+      fields.forEach((field) => {
+        switch (typeof payload[field]) {
+          case "number":
+            point.floatField(field, payload[field]);
+            break;
+          case "string":
+            point.stringField(field, payload[field]);
+            break;
+          case "boolean":
+            point.booleanField(field, payload[field]);
+            break;
+        }
+      });
+
+      point.timestamp(time ? new Date(time) : new Date());
+      //    write
+      writeClient.writePoint(point);
+    }
+    return await writeClient.close();
+  }
   async deleteData(query) {
     const parsedQ = `_measurement=\"${query.class}\" and ${Object.entries(query)
       .map(([k, v]) => `${k}=\"${v}\"`)

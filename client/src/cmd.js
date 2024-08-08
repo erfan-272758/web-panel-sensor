@@ -117,9 +117,9 @@ async function wsDataHandler(id, c = "") {
   try {
     for (const payload of payloads) {
       const response = await socket.timeout(5000).emitWithAck("data", {
+        ...payload,
         id,
         class: c,
-        payload,
       });
       if (response.status !== "success") {
         throw new Error(response.message ?? "somethings went wrong");
@@ -171,9 +171,9 @@ async function mqttDataHandler(id, c = "") {
         "data",
         Buffer.from(
           JSON.stringify({
+            ...payload,
             id,
             class: c,
-            payload,
           })
         )
       );

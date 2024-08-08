@@ -8,15 +8,23 @@ export function question(q) {
 
 export function generatePayload(c = "") {
   let data;
+  const t = new Date();
+  t.setDate(t.getDate() - 1);
   switch (c) {
     case "Env":
       data = envData();
+      const info = { df: 0, time: t };
+      data = data.map((d, i) => ({
+        ...info,
+        time: new Date(t.getTime() - i * 1000),
+        data: d,
+      }));
       break;
     case "Acc":
-      data = accData();
+      data = [{ df: 1, start: t, sps: 10, data: accData() }];
       break;
     case "Info":
-      data = infoData();
+      data = infoData().map((d) => ({ df: 2, data: d }));
       break;
 
     default:
@@ -24,11 +32,7 @@ export function generatePayload(c = "") {
       return null;
   }
 
-  const base = new Date(Date.now() - 24 * 60 * 60 * 1000);
-  return data.map((d) => {
-    base.setSeconds(base.getSeconds() + 1);
-    return { ...d, at: base.toISOString() };
-  });
+  return data;
 }
 
 function envData() {
@@ -45,7 +49,11 @@ function envData() {
 function accData() {
   const data = [];
   for (let i = 0; i < 100; i++) {
-    data.push({ coordinate: `0,0,${i / (randomInt(3) + 1) + 10}` });
+    data.push(
+      `${i / (randomInt(3) + 1) + 10},${i / (randomInt(3) + 1) + 10},${
+        i / (randomInt(3) + 1) + 10
+      }`
+    );
   }
   return data;
 }
