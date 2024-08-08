@@ -255,80 +255,108 @@ const EnvChart: React.FC<EnvChartProps> = ({ temp, hum }) => {
 };
 
 const AccChart: React.FC<AccChartProps> = ({ x, y, z }) => {
-  if (!x || !y || !z) return null;
-  const acc = x || y || z;
-  const accFormat = acc ? generateTimeFormat(acc) : null;
-  // Calculate acceleration based on the provided data
-  const accelerationData = useMemo(() => {
-    return (
-      x
-        // map to point
-        .map((_, i) => ({
-          x: x[i].value,
-          y: y[i].value,
-          z: z[i].value,
-          time: new Date(x[i].time),
-        }))
-        // map to speed
-        .map((point, index, data) => {
-          if (index === 0) {
-            return { time: point.time, speed: 0 }; // Assuming initial speed is 0
-          } else {
-            const prevPoint = data[index - 1];
-            const locChange = Math.sqrt(
-              (point.x - prevPoint.x) ** 2 +
-                (point.y - prevPoint.y) ** 2 +
-                (point.z - prevPoint.z) ** 2
-            );
-            const timeChange =
-              (point.time.getTime() - prevPoint.time.getTime()) / 1000;
-            return { time: point.time, speed: locChange / timeChange };
-          }
-        })
-        // map to acc
-        .map((s, index, d) => {
-          if (index === 0) {
-            return { time: s.time, acc: 0 }; // Assuming initial acc is 0
-          } else {
-            const prevS = d[index - 1];
-            const speedChange = s.speed - prevS.speed;
-            const timeChange = (s.time.getTime() - prevS.time.getTime()) / 1000;
-            return { time: s.time, acc: speedChange / timeChange };
-          }
-        })
-    );
-  }, [x, y, z]);
+  if (!x && !y && !z) return null;
+
+  const xFormat = x ? generateTimeFormat(x) : null;
+  const yFormat = y ? generateTimeFormat(y) : null;
+  const zFormat = z ? generateTimeFormat(z) : null;
 
   return (
-    <LineChart width={800} height={400} data={accelerationData}>
-      <CartesianGrid />
-      <XAxis
-        dataKey="time"
-        stroke="#dddd"
-        tickFormatter={(v, i) => {
-          const d = new Date(v);
-          if (i == 0) {
-            return new Intl.DateTimeFormat("en-US", {
-              day: "2-digit",
-              hour: "numeric",
-              minute: "numeric",
-            }).format(d);
-          }
+    <>
+      {x ? (
+        <LineChart width={800} height={400} data={x}>
+          <CartesianGrid />
+          <XAxis
+            dataKey="time"
+            stroke="#dddd"
+            tickFormatter={(v, i) => {
+              const d = new Date(v);
+              if (i == 0) {
+                return new Intl.DateTimeFormat("en-US", {
+                  day: "2-digit",
+                  hour: "numeric",
+                  minute: "numeric",
+                }).format(d);
+              }
 
-          return accFormat?.format(d) ?? "";
-        }}
-      />
-      <YAxis />
-      <Tooltip />
-      <Legend />
-      <Line
-        type="monotone"
-        dataKey="acc"
-        name="Acceleration"
-        stroke="#8884d8"
-        dot={<></>}
-      />
-    </LineChart>
+              return xFormat?.format(d) ?? "";
+            }}
+          />
+          <YAxis />
+          <Tooltip />
+          <Legend />
+          <Line
+            type="monotone"
+            dataKey="value"
+            name="Acceleration X"
+            stroke="#8884d8"
+            dot={<></>}
+          />
+        </LineChart>
+      ) : null}
+      {y ? (
+        <LineChart width={800} height={400} data={y}>
+          <CartesianGrid />
+          <XAxis
+            dataKey="time"
+            stroke="#dddd"
+            tickFormatter={(v, i) => {
+              const d = new Date(v);
+              if (i == 0) {
+                return new Intl.DateTimeFormat("en-US", {
+                  day: "2-digit",
+                  hour: "numeric",
+                  minute: "numeric",
+                }).format(d);
+              }
+
+              return yFormat?.format(d) ?? "";
+            }}
+          />
+          <YAxis />
+          <Tooltip />
+          <Legend />
+          <Line
+            type="monotone"
+            dataKey="value"
+            name="Acceleration Y"
+            stroke="#90caf9"
+            dot={<></>}
+          />
+        </LineChart>
+      ) : null}
+      {z ? (
+        <LineChart width={800} height={400} data={z}>
+          <CartesianGrid />
+          <XAxis
+            dataKey="time"
+            stroke="#dddd"
+            tickFormatter={(v, i) => {
+              const d = new Date(v);
+              if (i == 0) {
+                return new Intl.DateTimeFormat("en-US", {
+                  day: "2-digit",
+                  hour: "numeric",
+                  minute: "numeric",
+                }).format(d);
+              }
+
+              return zFormat?.format(d) ?? "";
+            }}
+          />
+          <YAxis />
+          <Tooltip />
+          <Legend />
+          <Line
+            type="monotone"
+            dataKey="value"
+            name="Acceleration Z"
+            stroke="#8884d8"
+            dot={<></>}
+          />
+        </LineChart>
+      ) : null}
+    </>
   );
 };
 
