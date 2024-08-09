@@ -7,6 +7,8 @@ import {
   LineChart,
   XAxis,
   YAxis,
+  AreaChart,
+  Area,
 } from "recharts";
 import sensorApi, { ChartData } from "../dataProvider/sensor";
 import CustomDateTimeRangePicker from "../UI/CustomDateTimeRangePicker";
@@ -22,6 +24,8 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import FavBtn from "../UI/FavBtn";
 import localProvider from "../dataProvider/local";
+import { addDays } from "date-fns";
+import dayjs from "dayjs";
 
 export type ChartDataMap = { [k: string]: ChartData[] | undefined };
 export type onFav = (active: boolean, field: string) => void;
@@ -294,65 +298,90 @@ export const EnvChart: React.FC<EnvChartProps> = ({
     <>
       {temp ? (
         <ContentWrapper field="temp" onFav={onFav} isFav={isTempFav}>
-          <LineChart width={800} height={400} data={temp}>
-            <CartesianGrid stroke="#dddd" />
+          <AreaChart width={800} height={400} data={temp}>
+            <CartesianGrid strokeDasharray="3 3" />
+
+            <defs>
+              <linearGradient id="colorUvTemp" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="#90caf9" stopOpacity={0.8} />
+                <stop offset="85%" stopColor="#90caf9" stopOpacity={0} />
+              </linearGradient>
+            </defs>
+
             <XAxis
               dataKey="time"
-              tickFormatter={(v, i) => {
-                const d = new Date(v);
-                if (i == 0) {
-                  return new Intl.DateTimeFormat("en-US", {
-                    day: "2-digit",
-                    hour: "numeric",
-                    minute: "numeric",
-                  }).format(d);
-                }
-                return tempFormat?.format(d) ?? "";
+              domain={[
+                new Date(temp[0]?.time).getTime(),
+                new Date(temp[temp.length - 1]?.time).getTime(),
+              ]}
+              tickFormatter={(date: number): string => {
+                const d = dayjs(date);
+                const f = "MM-DD HH:mm:ss";
+                return d.format(tempFormat ?? f);
               }}
             />
-            <YAxis />
-            <Tooltip />
+            <YAxis dataKey={"value"} />
+            <Tooltip
+              cursor={{ strokeDasharray: "3 3" }}
+              formatter={(value: any, name, item, index, payload) => {
+                return `${value} - ${dayjs(item.payload.time).format(
+                  "YYYY-MM-DD HH:mm:ss"
+                )}`;
+              }}
+            />
             <Legend />
-            <Line
+            <Area
               type="monotone"
               dataKey="value"
               name="Temperature"
               stroke="#90caf9"
-              dot={<></>}
+              strokeWidth={2}
+              fill="url(#colorUvTemp)"
             />
-          </LineChart>
+          </AreaChart>
         </ContentWrapper>
       ) : null}
       {hum ? (
         <ContentWrapper field="hum" onFav={onFav} isFav={isHumFav}>
-          <LineChart width={800} height={400} data={hum}>
-            <CartesianGrid stroke="#dddd" />
+          <AreaChart width={800} height={400} data={hum}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <defs>
+              <linearGradient id="colorUvHum" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="#8884d8" stopOpacity={0.8} />
+                <stop offset="85%" stopColor="#8884d8" stopOpacity={0} />
+              </linearGradient>
+            </defs>
             <XAxis
               dataKey="time"
-              tickFormatter={(v, i) => {
-                const d = new Date(v);
-                if (i == 0) {
-                  return new Intl.DateTimeFormat("en-US", {
-                    day: "2-digit",
-                    hour: "numeric",
-                    minute: "numeric",
-                  }).format(d);
-                }
-
-                return humFormat?.format(d) ?? "";
+              domain={[
+                new Date(hum[0]?.time).getTime(),
+                new Date(hum[hum.length - 1]?.time).getTime(),
+              ]}
+              tickFormatter={(date: number): string => {
+                const d = dayjs(date);
+                const f = "MM-DD HH:mm:ss";
+                return d.format(humFormat ?? f);
               }}
             />
-            <YAxis />
-            <Tooltip />
+            <YAxis dataKey={"value"} />
+            <Tooltip
+              cursor={{ strokeDasharray: "3 3" }}
+              formatter={(value: any, name, item, index, payload) => {
+                return `${value} - ${dayjs(item.payload.time).format(
+                  "YYYY-MM-DD HH:mm:ss"
+                )}`;
+              }}
+            />
             <Legend />
-            <Line
+            <Area
               type="monotone"
               dataKey="value"
               name="Humidity"
               stroke="#8884d8"
-              dot={<></>}
+              strokeWidth={2}
+              fill="url(#colorUvHum)"
             />
-          </LineChart>
+          </AreaChart>
         </ContentWrapper>
       ) : null}
     </>
@@ -378,101 +407,132 @@ export const AccChart: React.FC<AccChartProps> = ({
     <>
       {x ? (
         <ContentWrapper field="x" onFav={onFav} isFav={isXFav}>
-          <LineChart width={800} height={400} data={x}>
-            <CartesianGrid />
+          <AreaChart width={800} height={400} data={x}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <defs>
+              <linearGradient id="colorUvX" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="#8884d8" stopOpacity={0.8} />
+                <stop offset="85%" stopColor="#8884d8" stopOpacity={0} />
+              </linearGradient>
+            </defs>
             <XAxis
               dataKey="time"
-              stroke="#dddd"
-              tickFormatter={(v, i) => {
-                const d = new Date(v);
-                if (i == 0) {
-                  return new Intl.DateTimeFormat("en-US", {
-                    day: "2-digit",
-                    hour: "numeric",
-                    minute: "numeric",
-                  }).format(d);
-                }
-
-                return xFormat?.format(d) ?? "";
+              domain={[
+                new Date(x[0]?.time).getTime(),
+                new Date(x[x.length - 1]?.time).getTime(),
+              ]}
+              tickFormatter={(date: number): string => {
+                const d = dayjs(date);
+                const f = "MM-DD HH:mm:ss";
+                return d.format(xFormat ?? f);
               }}
             />
-            <YAxis />
-            <Tooltip />
+            <YAxis dataKey={"value"} />
+            <Tooltip
+              cursor={{ strokeDasharray: "3 3" }}
+              formatter={(value: any, name, item, index, payload) => {
+                return `${value} - ${dayjs(item.payload.time).format(
+                  "YYYY-MM-DD HH:mm:ss.SSS"
+                )}`;
+              }}
+            />
             <Legend />
-            <Line
+            <Area
               type="monotone"
               dataKey="value"
-              name="Acceleration X"
               stroke="#8884d8"
-              dot={<></>}
+              strokeWidth={2}
+              fill="url(#colorUvX)"
+              name="Acceleration X"
             />
-          </LineChart>
+          </AreaChart>
         </ContentWrapper>
       ) : null}
       {y ? (
         <ContentWrapper field="y" onFav={onFav} isFav={isYFav}>
-          <LineChart width={800} height={400} data={y}>
-            <CartesianGrid />
+          <AreaChart width={800} height={400} data={y}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <defs>
+              <linearGradient id="colorUvY" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="#90caf9" stopOpacity={0.8} />
+                <stop offset="85%" stopColor="#90caf9" stopOpacity={0} />
+              </linearGradient>
+            </defs>
             <XAxis
               dataKey="time"
-              stroke="#dddd"
-              tickFormatter={(v, i) => {
-                const d = new Date(v);
-                if (i == 0) {
-                  return new Intl.DateTimeFormat("en-US", {
-                    day: "2-digit",
-                    hour: "numeric",
-                    minute: "numeric",
-                  }).format(d);
-                }
-
-                return yFormat?.format(d) ?? "";
+              domain={[
+                new Date(y[0]?.time).getTime(),
+                new Date(y[y.length - 1]?.time).getTime(),
+              ]}
+              tickFormatter={(date: number): string => {
+                const d = dayjs(date);
+                const f = "MM-DD HH:mm:ss";
+                return d.format(yFormat ?? f);
               }}
             />
-            <YAxis />
-            <Tooltip />
+            <YAxis dataKey={"value"} />
+            <Tooltip
+              cursor={{ strokeDasharray: "3 3" }}
+              formatter={(value: any, name, item, index, payload) => {
+                return `${value} - ${dayjs(item.payload.time).format(
+                  "YYYY-MM-DD HH:mm:ss.SSS"
+                )}`;
+              }}
+            />
             <Legend />
-            <Line
+            <Area
               type="monotone"
               dataKey="value"
               name="Acceleration Y"
+              strokeWidth={2}
               stroke="#90caf9"
-              dot={<></>}
+              fill="url(#colorUvY)"
             />
-          </LineChart>
+          </AreaChart>
         </ContentWrapper>
       ) : null}
       {z ? (
         <ContentWrapper field="z" onFav={onFav} isFav={isZFav}>
-          <LineChart width={800} height={400} data={z}>
-            <CartesianGrid />
+          <AreaChart width={800} height={400} data={z}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <defs>
+              <linearGradient id="colorUvZ" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="#8884d8" stopOpacity={0.8} />
+                <stop offset="85%" stopColor="#8884d8" stopOpacity={0} />
+              </linearGradient>
+            </defs>
+
             <XAxis
               dataKey="time"
-              stroke="#dddd"
-              tickFormatter={(v, i) => {
-                const d = new Date(v);
-                if (i == 0) {
-                  return new Intl.DateTimeFormat("en-US", {
-                    day: "2-digit",
-                    hour: "numeric",
-                    minute: "numeric",
-                  }).format(d);
-                }
-
-                return zFormat?.format(d) ?? "";
+              domain={[
+                new Date(z[0]?.time).getTime(),
+                new Date(z[z.length - 1]?.time).getTime(),
+              ]}
+              tickFormatter={(date: number): string => {
+                const d = dayjs(date);
+                const f = "MM-DD HH:mm:ss";
+                return d.format(zFormat ?? f);
               }}
             />
-            <YAxis />
-            <Tooltip />
+            <YAxis dataKey={"value"} />
+            <Tooltip
+              cursor={{ strokeDasharray: "3 3" }}
+              formatter={(value: any, name, item, index, payload) => {
+                return `${value} - ${dayjs(item.payload.time).format(
+                  "YYYY-MM-DD HH:mm:ss.SSS"
+                )}`;
+              }}
+            />
             <Legend />
-            <Line
+            <Area
               type="monotone"
               dataKey="value"
               name="Acceleration Z"
               stroke="#8884d8"
-              dot={<></>}
+              strokeWidth={2}
+              fill="url(#colorUvZ)"
             />
-          </LineChart>
+          </AreaChart>
         </ContentWrapper>
       ) : null}
     </>
@@ -581,35 +641,29 @@ function generateTimeFormat(chart: ChartData[]) {
   const [f, l] = [chart[0], chart[chart.length - 1]];
 
   if (!f || !l) {
-    return new Intl.DateTimeFormat("en-US", {
-      day: "numeric",
-      hour: "numeric",
-      minute: "numeric",
-    });
+    return "YYYY-MM-DD HH:mm:ss";
   }
 
   const duration = Math.abs(
     new Date(f.time).getTime() - new Date(l.time).getTime()
   );
 
-  const ops: Intl.DateTimeFormatOptions = {};
-  const m = 60 * 1000;
+  const s = 1000;
+  const m = 60 * s;
   const h = 1 * 60 * m;
   const d = 24 * h;
   const mon = 30 * d;
-  if (duration <= m) {
-    ops.second = "numeric";
-    ops.minute = "2-digit";
-  } else if (duration <= h) {
-    ops.minute = "2-digit";
-    ops.hour = "2-digit";
-  } else if (duration <= d) {
-    ops.hour = "numeric";
-    ops.day = "2-digit";
-  } else if (duration <= mon) {
-    ops.day = "2-digit";
-  } else {
-    ops.day = "numeric";
+  if (duration <= s) {
+    return "mm:ss.SSS";
   }
-  return new Intl.DateTimeFormat("en-US", ops);
+  if (duration <= m) {
+    return "HH:mm:ss";
+  } else if (duration <= h) {
+    return "HH:mm:ss";
+  } else if (duration <= d) {
+    return "HH:mm:ss";
+  } else if (duration <= mon) {
+    return "MM-DD";
+  }
+  return "YYYY-MM-DD HH:mm:ss";
 }
