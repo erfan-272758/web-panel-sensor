@@ -7,27 +7,19 @@ import {
   useStore,
   StoreContextProvider,
 } from "react-admin";
-import { Route } from "react-router";
 
 import authProvider from "./authProvider";
-import categories from "./categories";
 import { Dashboard } from "./dashboard";
 import dataProviderFactory from "./dataProvider";
 import englishMessages from "./i18n/en";
-import invoices from "./invoices";
 import { Layout, Login } from "./layout";
-import orders from "./orders";
-import products from "./products";
-import reviews from "./reviews";
-import Segments from "./segments/Segments";
-import visitors from "./visitors";
 import { themes, ThemeName } from "./themes/themes";
 import users from "./users";
 import devices from "./devices";
 
 const i18nProvider = polyglotI18nProvider(
   (locale) => {
-    if (locale === "fr") {
+    if (locale === "fa") {
       return import("./i18n/fa").then((messages) => messages.default);
     }
 
@@ -37,7 +29,7 @@ const i18nProvider = polyglotI18nProvider(
   "en",
   [
     { locale: "en", name: "English" },
-    { locale: "fa", name: "فارسی" },
+    // { locale: "fa", name: "فارسی" },
   ]
 );
 
@@ -55,7 +47,7 @@ const App = () => {
       )}
       store={store}
       authProvider={authProvider}
-      // dashboard={Dashboard}
+      dashboard={Dashboard}
       loginPage={Login}
       layout={Layout}
       i18nProvider={i18nProvider}
@@ -66,15 +58,6 @@ const App = () => {
     >
       <Resource name="users" {...users} />
       <Resource name="devices" {...devices} />
-      <CustomRoutes>
-        <Route path="/segments" element={<Segments />} />
-      </CustomRoutes>
-      <Resource name="customers" {...users} />
-      <Resource name="commands" {...orders} options={{ label: "Orders" }} />
-      <Resource name="invoices" {...invoices} />
-      <Resource name="products" {...products} />
-      <Resource name="categories" {...categories} />
-      <Resource name="reviews" {...reviews} />
     </Admin>
   );
 };

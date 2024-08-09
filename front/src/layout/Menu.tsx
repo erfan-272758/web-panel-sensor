@@ -6,6 +6,7 @@ import {
   MenuItemLink,
   MenuProps,
   useSidebarState,
+  DashboardMenuItem,
 } from "react-admin";
 import devices from "../devices";
 import users from "../users";
@@ -38,6 +39,7 @@ const Menu = ({ dense = false }: MenuProps) => {
           }),
       }}
     >
+      <DashboardMenuItem />
       {/* <DashboardMenuItem /> */}
       {/* <SubMenu
         handleToggle={() => handleToggle("menuSales")}

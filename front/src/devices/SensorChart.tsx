@@ -23,8 +23,8 @@ import Paper from "@mui/material/Paper";
 import FavBtn from "../UI/FavBtn";
 import localProvider from "../dataProvider/local";
 
-type ChartDataMap = { [k: string]: ChartData[] | undefined };
-type onFav = (active: boolean, field: string) => void;
+export type ChartDataMap = { [k: string]: ChartData[] | undefined };
+export type onFav = (active: boolean, field: string) => void;
 
 export default function SensorChart({ sensor }: { sensor: any }) {
   const [chartDataMap, setChartDataMap] = useState<ChartDataMap>({});
@@ -279,7 +279,7 @@ const ContentWrapper: React.FC<{
   );
 };
 
-const EnvChart: React.FC<EnvChartProps> = ({
+export const EnvChart: React.FC<EnvChartProps> = ({
   temp,
   hum,
   onFav,
@@ -359,7 +359,7 @@ const EnvChart: React.FC<EnvChartProps> = ({
   );
 };
 
-const AccChart: React.FC<AccChartProps> = ({
+export const AccChart: React.FC<AccChartProps> = ({
   x,
   y,
   z,
@@ -499,7 +499,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-const InfoTable: React.FC<InfoTableProps> = ({
+export const InfoTable: React.FC<InfoTableProps> = ({
   text,
   num,
   onFav,
