@@ -22,6 +22,9 @@ const DeviceCreate = () => {
   return (
     <Create mutationOptions={{ onSuccess }}>
       <SimpleForm defaultValues={{ status: "pending" }}>
+        {/* ID */}
+        <TextInput source="id" />
+
         {/* Name */}
         <TextInput source="name" isRequired validate={required()} />
 

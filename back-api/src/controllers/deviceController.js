@@ -4,6 +4,7 @@ import deviceModel from "../models/deviceModel.js";
 import transformDecorator from "../decorator/transformDecorator.js";
 import sensorModel from "../models/sensorModel.js";
 import dataModel from "../models/dataModel.js";
+import slugify from "../utils/slugify.js";
 
 class DeviceController {
   async getAll(req, res, next) {
@@ -53,8 +54,17 @@ class DeviceController {
   }
   async create(req, res, next) {
     if (!req.body.name) return next(new HttpError(400, "name is required"));
+    let id = crypto.randomUUID();
+    if (req.body.id) {
+      const iid = slugify(req.body.id);
+      const [d] = await deviceModel.readDevice({ id: iid });
+      if (d) {
+        return next(new HttpError(400, "id is duplicate"));
+      }
+      id = iid;
+    }
     const body = {
-      id: crypto.randomUUID(),
+      id,
       name: req.body.name,
       owner:
         req.user.role === "admin"
