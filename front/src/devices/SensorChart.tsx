@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Tooltip,
   CartesianGrid,
@@ -20,15 +20,49 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
+import FavBtn from "../UI/FavBtn";
+import localProvider from "../dataProvider/local";
 
 type ChartDataMap = { [k: string]: ChartData[] | undefined };
+type onFav = (active: boolean, field: string) => void;
 
 export default function SensorChart({ sensor }: { sensor: any }) {
   const [chartDataMap, setChartDataMap] = useState<ChartDataMap>({});
   const [loading, setLoading] = useState(false);
   const notif = useNotify();
+  const [dd, setDD] = useState({ start: new Date(), end: new Date() });
+
+  const onFav = useCallback(
+    (active: boolean, field: string) => {
+      const favItem = {
+        sensor,
+        start: dd.start,
+        end: dd.end,
+        field,
+      };
+      if (active) {
+        localProvider.addFav(favItem);
+        notif("Add to favorite list", { type: "success" });
+      } else {
+        localProvider.delFav(favItem);
+        notif("Delete from favorite list", { type: "success" });
+      }
+    },
+    [sensor, dd]
+  );
+
+  const isFavFor = (field: string) => {
+    return localProvider.isFav({
+      sensor,
+      field,
+      start: dd.start,
+      end: dd.end,
+    });
+  };
 
   const handleDateChange = async (startDate: Date, endDate: Date) => {
+    setDD({ start: startDate, end: endDate });
+
     // Fetch data from InfluxDB based on the selected date range
     setLoading(true);
     let response: ChartDataMap = {};
@@ -162,9 +196,29 @@ export default function SensorChart({ sensor }: { sensor: any }) {
           marginBottom: "5px",
         }}
       >
-        <EnvChart temp={chartDataMap.temp} hum={chartDataMap.hum} />
-        <AccChart x={chartDataMap.x} y={chartDataMap.y} z={chartDataMap.z} />
-        <InfoTable num={chartDataMap.num} text={chartDataMap.text} />
+        <EnvChart
+          temp={chartDataMap.temp}
+          hum={chartDataMap.hum}
+          onFav={onFav}
+          isTempFav={isFavFor("temp")}
+          isHumFav={isFavFor("hum")}
+        />
+        <AccChart
+          x={chartDataMap.x}
+          y={chartDataMap.y}
+          z={chartDataMap.z}
+          isXFav={isFavFor("x")}
+          isYFav={isFavFor("y")}
+          isZFav={isFavFor("z")}
+          onFav={onFav}
+        />
+        <InfoTable
+          num={chartDataMap.num}
+          text={chartDataMap.text}
+          isNumFav={isFavFor("num")}
+          isTextFav={isFavFor("text")}
+          onFav={onFav}
+        />
       </div>
     </div>
   ) : null;
@@ -173,18 +227,65 @@ export default function SensorChart({ sensor }: { sensor: any }) {
 interface EnvChartProps {
   temp?: ChartData[];
   hum?: ChartData[];
+  onFav?: onFav;
+  isTempFav?: boolean;
+  isHumFav?: boolean;
 }
 interface AccChartProps {
   x?: ChartData[];
   y?: ChartData[];
   z?: ChartData[];
+  onFav?: onFav;
+  isXFav?: boolean;
+  isYFav?: boolean;
+  isZFav?: boolean;
 }
 interface InfoTableProps {
   text?: ChartData[];
   num?: ChartData[];
+  onFav?: onFav;
+  isTextFav?: boolean;
+  isNumFav?: boolean;
 }
 
-const EnvChart: React.FC<EnvChartProps> = ({ temp, hum }) => {
+const ContentWrapper: React.FC<{
+  onFav?: onFav;
+  field: string;
+  isFav?: boolean;
+}> = ({ onFav, isFav, field, ...props }) => {
+  return (
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "row",
+        padding: "5px",
+        margin: "5px",
+      }}
+    >
+      {props.children}
+      {onFav ? (
+        <FavBtn
+          onClick={(active) => {
+            onFav(Boolean(active), field);
+          }}
+          activeDefault={isFav}
+          size="large"
+          style={{
+            height: "100%",
+          }}
+        />
+      ) : null}
+    </div>
+  );
+};
+
+const EnvChart: React.FC<EnvChartProps> = ({
+  temp,
+  hum,
+  onFav,
+  isHumFav,
+  isTempFav,
+}) => {
   if (!temp && !hum) return null;
   const tempFormat = temp ? generateTimeFormat(temp) : null;
   const humFormat = hum ? generateTimeFormat(hum) : null;
@@ -192,69 +293,81 @@ const EnvChart: React.FC<EnvChartProps> = ({ temp, hum }) => {
   return (
     <>
       {temp ? (
-        <LineChart width={800} height={400} data={temp}>
-          <CartesianGrid stroke="#dddd" />
-          <XAxis
-            dataKey="time"
-            tickFormatter={(v, i) => {
-              const d = new Date(v);
-              if (i == 0) {
-                return new Intl.DateTimeFormat("en-US", {
-                  day: "2-digit",
-                  hour: "numeric",
-                  minute: "numeric",
-                }).format(d);
-              }
-              return tempFormat?.format(d) ?? "";
-            }}
-          />
-          <YAxis />
-          <Tooltip />
-          <Legend />
-          <Line
-            type="monotone"
-            dataKey="value"
-            name="Temperature"
-            stroke="#90caf9"
-            dot={<></>}
-          />
-        </LineChart>
+        <ContentWrapper field="temp" onFav={onFav} isFav={isTempFav}>
+          <LineChart width={800} height={400} data={temp}>
+            <CartesianGrid stroke="#dddd" />
+            <XAxis
+              dataKey="time"
+              tickFormatter={(v, i) => {
+                const d = new Date(v);
+                if (i == 0) {
+                  return new Intl.DateTimeFormat("en-US", {
+                    day: "2-digit",
+                    hour: "numeric",
+                    minute: "numeric",
+                  }).format(d);
+                }
+                return tempFormat?.format(d) ?? "";
+              }}
+            />
+            <YAxis />
+            <Tooltip />
+            <Legend />
+            <Line
+              type="monotone"
+              dataKey="value"
+              name="Temperature"
+              stroke="#90caf9"
+              dot={<></>}
+            />
+          </LineChart>
+        </ContentWrapper>
       ) : null}
       {hum ? (
-        <LineChart width={800} height={400} data={hum}>
-          <CartesianGrid stroke="#dddd" />
-          <XAxis
-            dataKey="time"
-            tickFormatter={(v, i) => {
-              const d = new Date(v);
-              if (i == 0) {
-                return new Intl.DateTimeFormat("en-US", {
-                  day: "2-digit",
-                  hour: "numeric",
-                  minute: "numeric",
-                }).format(d);
-              }
+        <ContentWrapper field="hum" onFav={onFav} isFav={isHumFav}>
+          <LineChart width={800} height={400} data={hum}>
+            <CartesianGrid stroke="#dddd" />
+            <XAxis
+              dataKey="time"
+              tickFormatter={(v, i) => {
+                const d = new Date(v);
+                if (i == 0) {
+                  return new Intl.DateTimeFormat("en-US", {
+                    day: "2-digit",
+                    hour: "numeric",
+                    minute: "numeric",
+                  }).format(d);
+                }
 
-              return humFormat?.format(d) ?? "";
-            }}
-          />
-          <YAxis />
-          <Tooltip />
-          <Legend />
-          <Line
-            type="monotone"
-            dataKey="value"
-            name="Humidity"
-            stroke="#8884d8"
-            dot={<></>}
-          />
-        </LineChart>
+                return humFormat?.format(d) ?? "";
+              }}
+            />
+            <YAxis />
+            <Tooltip />
+            <Legend />
+            <Line
+              type="monotone"
+              dataKey="value"
+              name="Humidity"
+              stroke="#8884d8"
+              dot={<></>}
+            />
+          </LineChart>
+        </ContentWrapper>
       ) : null}
     </>
   );
 };
 
-const AccChart: React.FC<AccChartProps> = ({ x, y, z }) => {
+const AccChart: React.FC<AccChartProps> = ({
+  x,
+  y,
+  z,
+  onFav,
+  isXFav,
+  isYFav,
+  isZFav,
+}) => {
   if (!x && !y && !z) return null;
 
   const xFormat = x ? generateTimeFormat(x) : null;
@@ -264,97 +377,103 @@ const AccChart: React.FC<AccChartProps> = ({ x, y, z }) => {
   return (
     <>
       {x ? (
-        <LineChart width={800} height={400} data={x}>
-          <CartesianGrid />
-          <XAxis
-            dataKey="time"
-            stroke="#dddd"
-            tickFormatter={(v, i) => {
-              const d = new Date(v);
-              if (i == 0) {
-                return new Intl.DateTimeFormat("en-US", {
-                  day: "2-digit",
-                  hour: "numeric",
-                  minute: "numeric",
-                }).format(d);
-              }
+        <ContentWrapper field="x" onFav={onFav} isFav={isXFav}>
+          <LineChart width={800} height={400} data={x}>
+            <CartesianGrid />
+            <XAxis
+              dataKey="time"
+              stroke="#dddd"
+              tickFormatter={(v, i) => {
+                const d = new Date(v);
+                if (i == 0) {
+                  return new Intl.DateTimeFormat("en-US", {
+                    day: "2-digit",
+                    hour: "numeric",
+                    minute: "numeric",
+                  }).format(d);
+                }
 
-              return xFormat?.format(d) ?? "";
-            }}
-          />
-          <YAxis />
-          <Tooltip />
-          <Legend />
-          <Line
-            type="monotone"
-            dataKey="value"
-            name="Acceleration X"
-            stroke="#8884d8"
-            dot={<></>}
-          />
-        </LineChart>
+                return xFormat?.format(d) ?? "";
+              }}
+            />
+            <YAxis />
+            <Tooltip />
+            <Legend />
+            <Line
+              type="monotone"
+              dataKey="value"
+              name="Acceleration X"
+              stroke="#8884d8"
+              dot={<></>}
+            />
+          </LineChart>
+        </ContentWrapper>
       ) : null}
       {y ? (
-        <LineChart width={800} height={400} data={y}>
-          <CartesianGrid />
-          <XAxis
-            dataKey="time"
-            stroke="#dddd"
-            tickFormatter={(v, i) => {
-              const d = new Date(v);
-              if (i == 0) {
-                return new Intl.DateTimeFormat("en-US", {
-                  day: "2-digit",
-                  hour: "numeric",
-                  minute: "numeric",
-                }).format(d);
-              }
+        <ContentWrapper field="y" onFav={onFav} isFav={isYFav}>
+          <LineChart width={800} height={400} data={y}>
+            <CartesianGrid />
+            <XAxis
+              dataKey="time"
+              stroke="#dddd"
+              tickFormatter={(v, i) => {
+                const d = new Date(v);
+                if (i == 0) {
+                  return new Intl.DateTimeFormat("en-US", {
+                    day: "2-digit",
+                    hour: "numeric",
+                    minute: "numeric",
+                  }).format(d);
+                }
 
-              return yFormat?.format(d) ?? "";
-            }}
-          />
-          <YAxis />
-          <Tooltip />
-          <Legend />
-          <Line
-            type="monotone"
-            dataKey="value"
-            name="Acceleration Y"
-            stroke="#90caf9"
-            dot={<></>}
-          />
-        </LineChart>
+                return yFormat?.format(d) ?? "";
+              }}
+            />
+            <YAxis />
+            <Tooltip />
+            <Legend />
+            <Line
+              type="monotone"
+              dataKey="value"
+              name="Acceleration Y"
+              stroke="#90caf9"
+              dot={<></>}
+            />
+          </LineChart>
+        </ContentWrapper>
       ) : null}
       {z ? (
-        <LineChart width={800} height={400} data={z}>
-          <CartesianGrid />
-          <XAxis
-            dataKey="time"
-            stroke="#dddd"
-            tickFormatter={(v, i) => {
-              const d = new Date(v);
-              if (i == 0) {
-                return new Intl.DateTimeFormat("en-US", {
-                  day: "2-digit",
-                  hour: "numeric",
-                  minute: "numeric",
-                }).format(d);
-              }
+        <ContentWrapper field="z" onFav={onFav} isFav={isZFav}>
+          <LineChart width={800} height={400} data={z}>
+            <CartesianGrid />
+            <XAxis
+              dataKey="time"
+              stroke="#dddd"
+              tickFormatter={(v, i) => {
+                const d = new Date(v);
+                if (i == 0) {
+                  return new Intl.DateTimeFormat("en-US", {
+                    day: "2-digit",
+                    hour: "numeric",
+                    minute: "numeric",
+                  }).format(d);
+                }
 
-              return zFormat?.format(d) ?? "";
-            }}
-          />
-          <YAxis />
-          <Tooltip />
-          <Legend />
-          <Line
-            type="monotone"
-            dataKey="value"
-            name="Acceleration Z"
-            stroke="#8884d8"
-            dot={<></>}
-          />
-        </LineChart>
+                return zFormat?.format(d) ?? "";
+              }}
+            />
+            <YAxis />
+            <Tooltip />
+            <Legend />
+            <Line
+              type="monotone"
+              dataKey="value"
+              name="Acceleration Z"
+              stroke="#8884d8"
+              dot={<></>}
+            />
+          </LineChart>
+        </ContentWrapper>
       ) : null}
     </>
   );
@@ -380,7 +499,13 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-const InfoTable: React.FC<InfoTableProps> = ({ text, num }) => {
+const InfoTable: React.FC<InfoTableProps> = ({
+  text,
+  num,
+  onFav,
+  isNumFav,
+  isTextFav,
+}) => {
   return (
     <div
       style={{
@@ -392,57 +517,61 @@ const InfoTable: React.FC<InfoTableProps> = ({ text, num }) => {
       }}
     >
       {text?.length ? (
-        <TableContainer component={Paper}>
-          <Table sx={{ minWidth: 700 }} aria-label="customized table">
-            <TableHead>
-              <TableRow>
-                <StyledTableCell>Text</StyledTableCell>
-                <StyledTableCell align="right">Time</StyledTableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {text.map((row, i) => (
-                <StyledTableRow key={row.time + i}>
-                  <StyledTableCell component="th" scope="row">
-                    {row.value}
-                  </StyledTableCell>
-                  <StyledTableCell align="right">
-                    {new Date(row.time).toDateString()}
-                  </StyledTableCell>
-                </StyledTableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+        <ContentWrapper field="text" onFav={onFav} isFav={isTextFav}>
+          <TableContainer component={Paper}>
+            <Table sx={{ minWidth: 700 }} aria-label="customized table">
+              <TableHead>
+                <TableRow>
+                  <StyledTableCell>Text</StyledTableCell>
+                  <StyledTableCell align="right">Time</StyledTableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {text.map((row, i) => (
+                  <StyledTableRow key={row.time + i}>
+                    <StyledTableCell component="th" scope="row">
+                      {row.value}
+                    </StyledTableCell>
+                    <StyledTableCell align="right">
+                      {new Date(row.time).toDateString()}
+                    </StyledTableCell>
+                  </StyledTableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </ContentWrapper>
       ) : null}
       {num?.length ? (
-        <TableContainer
-          component={Paper}
-          style={{
-            marginTop: text ? "20px" : "0",
-          }}
-        >
-          <Table sx={{ minWidth: 700 }} aria-label="customized table">
-            <TableHead>
-              <TableRow>
-                <StyledTableCell>Number</StyledTableCell>
-                <StyledTableCell align="right">Time</StyledTableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {num.map((row, i) => (
-                <StyledTableRow key={row.time + i}>
-                  <StyledTableCell component="th" scope="row">
-                    {row.value}
-                  </StyledTableCell>
-                  <StyledTableCell align="right">
-                    {new Date(row.time).toDateString()}
-                  </StyledTableCell>
-                </StyledTableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+        <ContentWrapper field="num" onFav={onFav} isFav={isNumFav}>
+          <TableContainer
+            component={Paper}
+            style={{
+              marginTop: text ? "20px" : "0",
+            }}
+          >
+            <Table sx={{ minWidth: 700 }} aria-label="customized table">
+              <TableHead>
+                <TableRow>
+                  <StyledTableCell>Number</StyledTableCell>
+                  <StyledTableCell align="right">Time</StyledTableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {num.map((row, i) => (
+                  <StyledTableRow key={row.time + i}>
+                    <StyledTableCell component="th" scope="row">
+                      {row.value}
+                    </StyledTableCell>
+                    <StyledTableCell align="right">
+                      {new Date(row.time).toDateString()}
+                    </StyledTableCell>
+                  </StyledTableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </ContentWrapper>
       ) : null}
     </div>
   );
