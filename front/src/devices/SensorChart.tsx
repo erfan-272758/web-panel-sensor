@@ -13,7 +13,13 @@ import {
 import sensorApi, { ChartData } from "../dataProvider/sensor";
 import CustomDateTimeRangePicker from "../UI/CustomDateTimeRangePicker";
 import LoadingOverlay from "../UI/LoadingOverlay";
-import { Datagrid, DatagridBody, useNotify } from "react-admin";
+import {
+  Datagrid,
+  DatagridBody,
+  downloadCSV,
+  ExportButton,
+  useNotify,
+} from "react-admin";
 import { styled } from "@mui/material/styles";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -26,6 +32,7 @@ import FavBtn from "../UI/FavBtn";
 import localProvider from "../dataProvider/local";
 import { addDays } from "date-fns";
 import dayjs from "dayjs";
+import { Exporter, exporterFor } from "../UI/utils";
 
 export type ChartDataMap = { [k: string]: ChartData[] | undefined };
 export type onFav = (active: boolean, field: string) => void;
@@ -254,9 +261,10 @@ interface InfoTableProps {
 
 const ContentWrapper: React.FC<{
   onFav?: onFav;
+  exporter?: Exporter;
   field: string;
   isFav?: boolean;
-}> = ({ onFav, isFav, field, ...props }) => {
+}> = ({ onFav, exporter, isFav, field, ...props }) => {
   return (
     <div
       style={{
@@ -267,18 +275,38 @@ const ContentWrapper: React.FC<{
       }}
     >
       {props.children}
-      {onFav ? (
-        <FavBtn
-          onClick={(active) => {
-            onFav(Boolean(active), field);
-          }}
-          activeDefault={isFav}
-          size="large"
-          style={{
-            height: "100%",
-          }}
-        />
-      ) : null}
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          marginLeft: "5px",
+        }}
+      >
+        {onFav ? (
+          <FavBtn
+            onClick={(active) => {
+              onFav(Boolean(active), field);
+            }}
+            activeDefault={isFav}
+            size="large"
+            style={
+              {
+                // height: "100%",
+              }
+            }
+          />
+        ) : null}
+        {exporter ? (
+          <ExportButton
+            onClick={exporter}
+            label=""
+            size="large"
+            style={{
+              marginTop: onFav ? "10px" : "",
+            }}
+          />
+        ) : null}
+      </div>
     </div>
   );
 };
@@ -297,7 +325,12 @@ export const EnvChart: React.FC<EnvChartProps> = ({
   return (
     <>
       {temp ? (
-        <ContentWrapper field="temp" onFav={onFav} isFav={isTempFav}>
+        <ContentWrapper
+          field="temp"
+          onFav={onFav}
+          isFav={isTempFav}
+          exporter={exporterFor(temp)}
+        >
           <AreaChart width={800} height={400} data={temp}>
             <CartesianGrid strokeDasharray="3 3" />
 
@@ -342,7 +375,12 @@ export const EnvChart: React.FC<EnvChartProps> = ({
         </ContentWrapper>
       ) : null}
       {hum ? (
-        <ContentWrapper field="hum" onFav={onFav} isFav={isHumFav}>
+        <ContentWrapper
+          field="hum"
+          onFav={onFav}
+          isFav={isHumFav}
+          exporter={exporterFor(hum)}
+        >
           <AreaChart width={800} height={400} data={hum}>
             <CartesianGrid strokeDasharray="3 3" />
             <defs>
@@ -406,7 +444,12 @@ export const AccChart: React.FC<AccChartProps> = ({
   return (
     <>
       {x ? (
-        <ContentWrapper field="x" onFav={onFav} isFav={isXFav}>
+        <ContentWrapper
+          field="x"
+          onFav={onFav}
+          isFav={isXFav}
+          exporter={exporterFor(x)}
+        >
           <AreaChart width={800} height={400} data={x}>
             <CartesianGrid strokeDasharray="3 3" />
             <defs>
@@ -449,7 +492,12 @@ export const AccChart: React.FC<AccChartProps> = ({
         </ContentWrapper>
       ) : null}
       {y ? (
-        <ContentWrapper field="y" onFav={onFav} isFav={isYFav}>
+        <ContentWrapper
+          field="y"
+          onFav={onFav}
+          isFav={isYFav}
+          exporter={exporterFor(y)}
+        >
           <AreaChart width={800} height={400} data={y}>
             <CartesianGrid strokeDasharray="3 3" />
             <defs>
@@ -492,7 +540,12 @@ export const AccChart: React.FC<AccChartProps> = ({
         </ContentWrapper>
       ) : null}
       {z ? (
-        <ContentWrapper field="z" onFav={onFav} isFav={isZFav}>
+        <ContentWrapper
+          field="z"
+          onFav={onFav}
+          isFav={isZFav}
+          exporter={exporterFor(z)}
+        >
           <AreaChart width={800} height={400} data={z}>
             <CartesianGrid strokeDasharray="3 3" />
             <defs>
@@ -577,7 +630,12 @@ export const InfoTable: React.FC<InfoTableProps> = ({
       }}
     >
       {text?.length ? (
-        <ContentWrapper field="text" onFav={onFav} isFav={isTextFav}>
+        <ContentWrapper
+          field="text"
+          onFav={onFav}
+          isFav={isTextFav}
+          exporter={exporterFor(text)}
+        >
           <TableContainer component={Paper}>
             <Table sx={{ minWidth: 700 }} aria-label="customized table">
               <TableHead>
@@ -603,7 +661,12 @@ export const InfoTable: React.FC<InfoTableProps> = ({
         </ContentWrapper>
       ) : null}
       {num?.length ? (
-        <ContentWrapper field="num" onFav={onFav} isFav={isNumFav}>
+        <ContentWrapper
+          field="num"
+          onFav={onFav}
+          isFav={isNumFav}
+          exporter={exporterFor(num)}
+        >
           <TableContainer
             component={Paper}
             style={{

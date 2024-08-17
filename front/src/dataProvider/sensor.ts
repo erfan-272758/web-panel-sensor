@@ -1,7 +1,7 @@
 import api from "../api";
 
 export interface ChartData {
-  filed: string;
+  field: string;
   value: any;
   time: string;
 }

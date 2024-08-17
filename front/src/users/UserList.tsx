@@ -20,6 +20,7 @@ const UserListActions = () => (
   <TopToolbar>
     <FilterButton />
     <CreateButton />
+    <ExportButton />
   </TopToolbar>
 );
 

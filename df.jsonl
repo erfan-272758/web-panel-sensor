@@ -1,0 +1,29 @@
+  
+  {
+    "df" : 0,
+    "time":"",
+    "class":"Env",
+    "data":{
+      "temp" : 0,
+      "hum" : 0,
+    }
+  }
+
+
+  {
+    "df" : 1,
+    "start":"",
+    "class":"Acc",
+    "sps":100,
+    "data":["x,y,z","x,y,z"]
+  }
+
+
+  
+  {
+    "df" : 2,
+    "class":"Info",
+    "data":{
+      "text" : "hello",
+    }
+  }
