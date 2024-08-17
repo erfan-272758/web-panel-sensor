@@ -71,11 +71,15 @@ export default function SensorChart({ sensor }: { sensor: any }) {
     });
   };
 
-  const handleDateChange = async (startDate: Date, endDate: Date) => {
+  const handleDateChange = async (
+    startDate: Date,
+    endDate: Date,
+    isAutoUpdate?: boolean
+  ) => {
     setDD({ start: startDate, end: endDate });
 
     // Fetch data from InfluxDB based on the selected date range
-    setLoading(true);
+    !isAutoUpdate && setLoading(true);
     let response: ChartDataMap = {};
     switch (sensor.class) {
       case "Env":
@@ -94,13 +98,17 @@ export default function SensorChart({ sensor }: { sensor: any }) {
 
         if (tempResp.error) {
           console.error(tempResp.error);
-          notif("Error on fetch data for chart temperature", { type: "error" });
+          !isAutoUpdate &&
+            notif("Error on fetch data for chart temperature", {
+              type: "error",
+            });
         } else {
           response.temp = tempResp.data;
         }
         if (humResp.error) {
           console.error(humResp.error);
-          notif("Error on fetch data for chart humidity", { type: "error" });
+          !isAutoUpdate &&
+            notif("Error on fetch data for chart humidity", { type: "error" });
         } else {
           response.hum = humResp.data;
         }
@@ -128,19 +136,22 @@ export default function SensorChart({ sensor }: { sensor: any }) {
 
         if (xResp.error) {
           console.error(xResp.error);
-          notif("Error on fetch data for chart x", { type: "error" });
+          !isAutoUpdate &&
+            notif("Error on fetch data for chart x", { type: "error" });
         } else {
           response.x = xResp.data;
         }
         if (yResp.error) {
           console.error(yResp.error);
-          notif("Error on fetch data for chart y", { type: "error" });
+          !isAutoUpdate &&
+            notif("Error on fetch data for chart y", { type: "error" });
         } else {
           response.y = yResp.data;
         }
         if (zResp.error) {
           console.error(zResp.error);
-          notif("Error on fetch data for chart z", { type: "error" });
+          !isAutoUpdate &&
+            notif("Error on fetch data for chart z", { type: "error" });
         } else {
           response.z = zResp.data;
         }
@@ -162,13 +173,15 @@ export default function SensorChart({ sensor }: { sensor: any }) {
 
         if (textResp.error) {
           console.error(textResp.error);
-          notif("Error on fetch data for chart text", { type: "error" });
+          !isAutoUpdate &&
+            notif("Error on fetch data for chart text", { type: "error" });
         } else {
           response.text = textResp.data;
         }
         if (numResp.error) {
           console.error(numResp.error);
-          notif("Error on fetch data for chart number", { type: "error" });
+          !isAutoUpdate &&
+            notif("Error on fetch data for chart number", { type: "error" });
         } else {
           response.num = numResp.data;
         }

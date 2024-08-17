@@ -9,7 +9,6 @@ export const exporterFor: (data: ChartData[]) => Exporter = (data) => {
     e.stopPropagation();
     const header = "field,value,time";
     const body: string[] = [];
-    console.log(data);
     data.forEach((d) => {
       body.push(`${String(d.field)},${JSON.stringify(d.value)},${d.time}`);
     });
