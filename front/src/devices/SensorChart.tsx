@@ -78,6 +78,8 @@ export default function SensorChart({ sensor }: { sensor: any }) {
   ) => {
     setDD({ start: startDate, end: endDate });
 
+    if (isAutoUpdate) isAutoUpdate = Math.random() < 0.3;
+
     // Fetch data from InfluxDB based on the selected date range
     !isAutoUpdate && setLoading(true);
     let response: ChartDataMap = {};
@@ -356,10 +358,14 @@ export const EnvChart: React.FC<EnvChartProps> = ({
 
             <XAxis
               dataKey="time"
-              domain={[
-                new Date(temp[0]?.time).getTime(),
-                new Date(temp[temp.length - 1]?.time).getTime(),
-              ]}
+              domain={
+                temp.length >= 2
+                  ? [
+                      new Date(temp[0]?.time).getTime(),
+                      new Date(temp[temp.length - 1]?.time).getTime(),
+                    ]
+                  : undefined
+              }
               tickFormatter={(date: number): string => {
                 const d = dayjs(date);
                 const f = "MM-DD HH:mm:ss";
@@ -404,10 +410,14 @@ export const EnvChart: React.FC<EnvChartProps> = ({
             </defs>
             <XAxis
               dataKey="time"
-              domain={[
-                new Date(hum[0]?.time).getTime(),
-                new Date(hum[hum.length - 1]?.time).getTime(),
-              ]}
+              domain={
+                hum.length >= 2
+                  ? [
+                      new Date(hum[0]?.time).getTime(),
+                      new Date(hum[hum.length - 1]?.time).getTime(),
+                    ]
+                  : undefined
+              }
               tickFormatter={(date: number): string => {
                 const d = dayjs(date);
                 const f = "MM-DD HH:mm:ss";
@@ -473,10 +483,14 @@ export const AccChart: React.FC<AccChartProps> = ({
             </defs>
             <XAxis
               dataKey="time"
-              domain={[
-                new Date(x[0]?.time).getTime(),
-                new Date(x[x.length - 1]?.time).getTime(),
-              ]}
+              domain={
+                x.length >= 2
+                  ? [
+                      new Date(x[0]?.time).getTime(),
+                      new Date(x[x.length - 1]?.time).getTime(),
+                    ]
+                  : undefined
+              }
               tickFormatter={(date: number): string => {
                 const d = dayjs(date);
                 const f = "MM-DD HH:mm:ss";
@@ -521,10 +535,14 @@ export const AccChart: React.FC<AccChartProps> = ({
             </defs>
             <XAxis
               dataKey="time"
-              domain={[
-                new Date(y[0]?.time).getTime(),
-                new Date(y[y.length - 1]?.time).getTime(),
-              ]}
+              domain={
+                y.length >= 2
+                  ? [
+                      new Date(y[0]?.time).getTime(),
+                      new Date(y[y.length - 1]?.time).getTime(),
+                    ]
+                  : undefined
+              }
               tickFormatter={(date: number): string => {
                 const d = dayjs(date);
                 const f = "MM-DD HH:mm:ss";
@@ -570,10 +588,14 @@ export const AccChart: React.FC<AccChartProps> = ({
 
             <XAxis
               dataKey="time"
-              domain={[
-                new Date(z[0]?.time).getTime(),
-                new Date(z[z.length - 1]?.time).getTime(),
-              ]}
+              domain={
+                z.length >= 2
+                  ? [
+                      new Date(z[0]?.time).getTime(),
+                      new Date(z[z.length - 1]?.time).getTime(),
+                    ]
+                  : undefined
+              }
               tickFormatter={(date: number): string => {
                 const d = dayjs(date);
                 const f = "MM-DD HH:mm:ss";
