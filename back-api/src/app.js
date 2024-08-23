@@ -8,10 +8,11 @@ import userRouter from "./routers/userRouter.js";
 import errorController from "./controllers/errorController.js";
 import deviceRouter from "./routers/deviceRouter.js";
 import dataRouter from "./routers/dataRouter.js";
+import { isTest } from "./config.js";
 
 const app = express();
 
-app.use(morgan("dev"));
+if (!isTest) app.use(morgan("dev"));
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));

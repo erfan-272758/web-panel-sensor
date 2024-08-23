@@ -15,7 +15,7 @@ export class AuthController {
     if (!user) return next(new HttpError(401, "invalid user id"));
     req.user = user;
 
-    if (res) return res.json(transformDecorator({ data: user }));
+    if (res) return res.json(transformDecorator({ data: { user, token } }));
     return next();
   }
   async loginWithUserPass(req, res, next) {
