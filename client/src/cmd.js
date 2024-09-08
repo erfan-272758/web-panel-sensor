@@ -1,4 +1,4 @@
-import { io } from "socket.io-client";
+import { WebSocket } from "ws";
 import amqp from "amqplib";
 import { getEnv } from "./config.js";
 import { generateInit, generatePayload, validateClass } from "./utils.js";
@@ -56,17 +56,27 @@ export async function handleCmd(cmd = "") {
 let wsSocket = null;
 let rabbitChan = null;
 function getWsSocket() {
-  if (wsSocket != null) return wsSocket;
+  return new Promise((resolve, reject) => {
+    if (wsSocket != null) return resolve(wsSocket);
 
-  wsSocket = io(`ws://${ws_host}:${ws_port}`, {
-    path: "/ws",
-    transports: ["websocket", "polling"],
-    extraHeaders: {
-      authorization: token,
-    },
+    const socket = new WebSocket(
+      `ws://${ws_host}:${ws_port}?authorization=${token}`
+    );
+    socket.onerror = (err) => {
+      if (wsSocket == socket) wsSocket = null;
+      return reject(err);
+    };
+    socket.onopen = () => {
+      wsSocket = socket;
+      return resolve(socket);
+    };
+    socket.onclose = (err) => {
+      if (wsSocket == socket) wsSocket = null;
+      return reject(err);
+    };
+
+    return wsSocket;
   });
-
-  return wsSocket;
 }
 async function getRabbitChan() {
   if (rabbitChan !== null) return rabbitChan;
@@ -90,12 +100,9 @@ async function wsInitHandler(device = "", c = "") {
   }
   const s = generateInit({ device, class: c });
 
-  const socket = getWsSocket();
   try {
-    const response = await socket.timeout(5000).emitWithAck("initial", s);
-    if (response.status !== "success") {
-      throw new Error(response.message ?? "somethings went wrong");
-    }
+    const socket = await getWsSocket();
+    socket.send(JSON.stringify({ event: "initial", data: s }));
     console.log(
       `initial socket successfully by id '${s.id}' for device '${device}' with class '${c}'`
     );
@@ -110,20 +117,22 @@ async function wsDataHandler(id, c = "") {
     );
   }
 
-  const socket = getWsSocket();
   const payloads = generatePayload(c);
   if (payloads == null) return;
 
   try {
+    const socket = await getWsSocket();
     for (const payload of payloads) {
-      const response = await socket.timeout(5000).emitWithAck("data", {
-        ...payload,
-        id,
-        class: c,
-      });
-      if (response.status !== "success") {
-        throw new Error(response.message ?? "somethings went wrong");
-      }
+      socket.send(
+        JSON.stringify({
+          event: "data",
+          data: {
+            ...payload,
+            id,
+            class: c,
+          },
+        })
+      );
     }
     console.log(`insert ${payloads.length} data successfully`);
   } catch (err) {

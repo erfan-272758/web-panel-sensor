@@ -10,9 +10,10 @@
   "dependencies": {
     "amqplib": "^0.10.4",
     "dotenv": "^16.4.5",
-    "socket.io-client": "^4.7.5"
+    "ws": "^8.18.0"
   },
   "devDependencies": {
-    "@types/amqplib": "^0.10.5"
+    "@types/amqplib": "^0.10.5",
+    "@types/ws": "^8.5.12"
   }
 }
