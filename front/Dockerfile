@@ -1,4 +1,4 @@
-FROM repo-afra.snappfood.dev/node:20.15.1-bookworm-slim AS base
+FROM node:20.15.1-bookworm-slim AS base
 WORKDIR /app
 RUN apt update -y
 
