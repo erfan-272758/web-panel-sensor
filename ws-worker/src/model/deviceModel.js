@@ -76,7 +76,7 @@ class DeviceModel {
     const parsedQuery = Object.entries(query)
       .map(([k, v]) => {
         let useRegex = false;
-        if (v.startsWith("$regex_")) {
+        if (typeof v == "string" && v.startsWith("$regex_")) {
           useRegex = true;
           v = v.split("$regex_")[1];
         }
