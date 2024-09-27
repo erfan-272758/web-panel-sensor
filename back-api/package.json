@@ -6,6 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "nodemon server",
+    "start": "node server.js",
     "test:e2e": "NODE_ENV=TEST node --experimental-vm-modules ./node_modules/.bin/jest --rootDir src/test -i all.test.js"
   },
   "dependencies": {

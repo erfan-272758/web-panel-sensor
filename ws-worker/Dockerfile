@@ -3,3 +3,10 @@ WORKDIR /app
 
 FROM base AS dev
 ENTRYPOINT  [ "yarn","dev" ]
+
+FROM base AS release
+COPY package.json yarn.lock /app/
+RUN yarn
+COPY . .
+ENTRYPOINT  [ "yarn","start" ]
+

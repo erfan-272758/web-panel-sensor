@@ -7,3 +7,10 @@ RUN apt update -y && apt install -y xdg-utils
 COPY package.json yarn.lock /app/
 RUN yarn
 ENTRYPOINT  [ "yarn","dev" ]
+
+FROM base AS release
+RUN apt update -y && apt install -y xdg-utils
+COPY package.json yarn.lock /app/
+RUN yarn
+COPY . .
+ENTRYPOINT  [ "yarn","dev" ]

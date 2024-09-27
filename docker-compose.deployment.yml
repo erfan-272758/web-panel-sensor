@@ -38,7 +38,9 @@ services:
     build:
       context: rabbit-worker
       dockerfile: Dockerfile
-      target: release
+      target: dev
+    volumes:
+      - ./rabbit-worker:/app
     networks:
       - back
       - queue
@@ -54,7 +56,9 @@ services:
     build:
       context: ws-worker
       dockerfile: Dockerfile
-      target: release
+      target: dev
+    volumes:
+      - ./ws-worker:/app
     networks:
       - back
     ports:
@@ -70,7 +74,9 @@ services:
     build:
       context: back-api
       dockerfile: Dockerfile
-      target: release
+      target: dev
+    volumes:
+      - ./back-api:/app
     networks:
       - back
     ports:
@@ -81,19 +87,21 @@ services:
       - influx
     restart: always
 
-  front:
-    container_name: front
-    build:
-      context: front
-      dockerfile: Dockerfile
-      target: release
-    ports:
-      - 8000:8000
-    env_file:
-      - ./front/.env.local
-    depends_on:
-      - back-api
-    restart: always
+  # front:
+  #   container_name: front
+  #   build:
+  #     context: front
+  #     dockerfile: Dockerfile
+  #     target: dev
+  #   volumes:
+  #     - ./front:/app
+  #   ports:
+  #     - 8000:8000
+  #   env_file:
+  #     - ./front/.env.local
+  #   depends_on:
+  #     - back-api
+  #   restart: always
 
 
 networks:
