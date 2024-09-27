@@ -1,0 +1,27 @@
+{
+    "event" : "initial",
+    "data": <init-data>
+}
+
+{
+    "event" : "data",
+    "data": <data-data>
+}
+
+
+{
+    "id" : "sendor-id",
+    "device": "device-id",
+    "class": "sensor-class",
+    "name": "sensor-name",
+    ... extra information about sensor
+}
+
+"ws://<ws-worker-host>:<ws-worker-port>?token=<sensor-token>"
+
+{
+    "hostname": "<rabbit-host>",
+    "port": "<rabbit-port>",
+    "username": "sensor",
+    "password": "<sensor-token>",
+  }
